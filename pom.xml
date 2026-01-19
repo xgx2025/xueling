@@ -8,7 +8,7 @@
         <version>3.5.9</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.hope</groupId>
+    <groupId>com.hope.xueling</groupId>
     <artifactId>xueling</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>xueling-platform</name>
