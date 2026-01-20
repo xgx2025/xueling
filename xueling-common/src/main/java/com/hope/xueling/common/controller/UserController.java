@@ -26,5 +26,5 @@ public class UserController {
         return Result.success("");
     }
 
-    //根据用户ID获取用户信息
+
 }
