@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE user (
     -- 基础信息
                        id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
                        uuid CHAR(36) UNIQUE NOT NULL COMMENT '全局唯一标识符',
@@ -18,8 +18,8 @@ CREATE TABLE users (
 
     -- 会员信息
                        vip_level TINYINT UNSIGNED DEFAULT 0 COMMENT 'VIP等级: 0-普通，2-VIP会员，3-SVIP会员',
-                       vip_start_at DATETIME COMMENT 'VIP开始时间'
-  vip_expire_at DATETIME COMMENT 'VIP到期时间',
+                       vip_start_at DATETIME COMMENT 'VIP开始时间',
+                       vip_expire_at DATETIME COMMENT 'VIP到期时间',
 
     -- 账户状态
                        account_status TINYINT DEFAULT 1 COMMENT '账户状态: 0-禁用, 1-正常，3-删除',
