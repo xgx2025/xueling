@@ -2,16 +2,19 @@ package com.hope.xueling.common.service.impl;
 
 import com.hope.xueling.common.domain.dto.LoginDTO;
 import com.hope.xueling.common.domain.entity.User;
+import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 /**
  * 认证服务实现类，处理用户登录、注册等操作
  * @author 谢光湘
- * @date： 2026/1/20
+ * @since 2026/1/20
  */
 @Slf4j
 @Service
@@ -34,18 +37,36 @@ public class AuthServiceImpl implements IAuthService {
     public User login(LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
         String phone = loginDTO.getPhone();
-        String password = loginDTO.getPassword();
-        if (email != null) {
-            log.info("正在使用邮箱: {} 登录", email);
-        } else if (phone != null) {
-            userService.getUserByPhone(phone);
-            log.info("正在使用手机号: {} 登录", phone);
-        } else {
-            // 无效登录方式
-            log.warn("无效的登录方式");
-            throw new ValidationException("无效的登录方式");
+        String rawPassword = loginDTO.getPassword();
+        String dbPassword;
+
+        if(!StringUtils.hasText(rawPassword)){
+            throw new ValidationException("密码不能为空");
         }
-        return null;
+
+        boolean isEmailLogin = StringUtils.hasText(email);
+        boolean isPhoneLogin = StringUtils.hasText(phone);
+
+        if (isEmailLogin){
+            dbPassword = userService.getPasswordByEmail(email);
+        }else if (isPhoneLogin) {
+            dbPassword = userService.getPasswordByPhone(phone);
+        }else {
+            log.warn("登录失败，未提供邮箱或手机号");
+            throw new ValidationException("无效的登录方式,请提供邮箱或手机号");
+        }
+
+        if (dbPassword == null || !checkPassword(rawPassword, dbPassword)) {
+            String account = isEmailLogin ? email : phone;
+            log.warn("账号: {} 登录失败，密码错误", account);
+            throw new BusinessException("账号或密码错误");
+        }
+
+        if (isEmailLogin){
+            return userService.getUserByEmail(email);
+        }else {
+            return userService.getUserByPhone(phone);
+        }
     }
 
     /**

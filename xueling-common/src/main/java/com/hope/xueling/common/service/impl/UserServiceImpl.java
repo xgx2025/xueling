@@ -3,17 +3,18 @@ package com.hope.xueling.common.service.impl;
 import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.UserVO;
-import com.hope.xueling.common.exception.BaseException;
+import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.common.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import net.sf.jsqlparser.util.validation.ValidationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
  * 用户服务实现类
  * @author 谢光益
- * @date 2026/1/20
+ * @since 2026/1/20
  */
 @Service
 @RequiredArgsConstructor  // Lombok自动生成构造器
@@ -30,16 +31,15 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User getUserByEmail(String email) {
-        //如果邮箱不为空，则返回邮箱对应的用户信息，否则返回null
-        if (email != null) {
-            //正则表达式校验
-            if (!email.matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$")) {
-                //邮箱格式错误异常
-                throw new BaseException("邮箱格式错误");
-            }
-            return userMapper.selectByEmail(email);
+        //邮箱不能为空
+        if (email == null) {
+            throw new ValidationException("邮箱不能为空");
         }
-        return null;
+        //正则表达式校验
+        if (!email.matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$")) {
+            throw new ValidationException("邮箱格式错误");
+        }
+        return userMapper.selectByEmail(email);
     }
 
     /**
@@ -49,16 +49,15 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User getUserByPhone(String phone) {
-        //如果手机号不为空，则返回手机号对应的用户信息，否则返回null
-        if (phone != null) {
-            //正则表达式校验
-            if (!phone.matches("^1[3456789]\\d{9}$")) {
-                //手机号格式错误异常
-                throw new BaseException("手机号格式错误");
-            }
-            return userMapper.selectByPhone(phone);
+        //手机号不能为空
+        if (phone == null) {
+            throw new ValidationException("手机号不能为空");
         }
-        return null;
+        //正则表达式校验
+        if (!phone.matches("^1[3456789]\\d{9}$")) {
+            throw new ValidationException("手机号格式错误");
+        }
+        return userMapper.selectByPhone(phone);
     }
 
     /**
@@ -80,8 +79,7 @@ public class UserServiceImpl implements IUserService {
     public UserVO getUserInfo(Long id) {
         //检查id是否为空
         if (id == null) {
-            //用户ID不能为空异常
-            throw new BaseException("用户ID不能为空");
+            throw new ValidationException("用户ID不能为空");
         }
         //根据用户ID查询用户信息
         User user = userMapper.selectById(id);
@@ -92,7 +90,7 @@ public class UserServiceImpl implements IUserService {
             return userVO;
         }
         //用户不存在异常
-        throw new BaseException("用户不存在");
+        throw new BusinessException("用户不存在");
     }
 
     /**
@@ -105,14 +103,14 @@ public class UserServiceImpl implements IUserService {
         //检查邮箱是否为空
         if (email == null) {
             //邮箱不能为空异常
-            throw new BaseException("邮箱不能为空");
+            throw new ValidationException("邮箱不能为空");
         }
         //根据邮箱查询用户密码
         String password = userMapper.selectPasswordByEmail(email);
         //如果密码为空，则抛出异常
         if (password == null) {
             //邮箱或手机号错误异常
-            throw new BaseException("不存在该邮箱");
+            throw new BusinessException("不存在该邮箱");
         }
         return password;
     }
@@ -127,14 +125,14 @@ public class UserServiceImpl implements IUserService {
         //检查手机号是否为空
         if (phone == null) {
             //手机号不能为空异常
-            throw new BaseException("手机号不能为空");
+            throw new ValidationException("手机号不能为空");
         }
         //根据手机号查询用户密码
         String password = userMapper.selectPasswordByPhone(phone);
         //如果密码为空，则抛出异常
         if (password == null) {
             //邮箱或手机号错误异常
-            throw new BaseException("不存在该手机号");
+            throw new BusinessException("不存在该手机号");
         }
         return password;
     }
