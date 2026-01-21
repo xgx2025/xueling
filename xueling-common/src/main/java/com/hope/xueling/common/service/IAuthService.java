@@ -28,4 +28,18 @@ public interface IAuthService {
       */
     void logout();
 
+     /**
+      * 发送邮箱验证码
+      * @param email 邮箱
+      * @param userIP 用户IP地址，用于防止恶意请求
+      */
+    void sendEmailVerificationCode(String email,String userIP);
+
+     /**
+      * 发送手机验证码
+      * @param phone 手机号
+      * @param userIP 用户IP地址，用于防止恶意请求
+      */
+    void sendPhoneVerificationCode(String phone,String userIP);
+
 }

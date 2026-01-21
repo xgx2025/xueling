@@ -8,41 +8,5 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    /**
-     * 根据邮箱查询用户
-     * @param email 邮箱
-     * @return User 用户实体类
-     */
-    @Select("select * from user where email = #{email}")
-    User selectByEmail(String email);
 
-    /**
-     * 根据手机号查询用户
-     * @param phone 手机号
-     * @return User 用户实体类
-     */
-    @Select("select * from user where phone = #{phone}")
-    User selectByPhone(String phone);
-
-    /**
-     * 根据用户ID更新用户信息
-     * @param userDTO 用户数据传输对象
-     */
-    void updateById(UserDTO userDTO);
-
-    /**
-     * 根据用户邮箱查询密码
-     * @param email 邮箱
-     * @return String 密码
-     */
-    @Select("select password from user where email = #{email}")
-    String selectPasswordByEmail(String email);
-
-    /**
-     * 根据用户手机号查询密码
-     * @param phone 手机号
-     * @return String 密码
-     */
-    @Select("select password from user where phone = #{phone}")
-    String selectPasswordByPhone(String phone);
 }

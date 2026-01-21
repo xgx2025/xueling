@@ -3,9 +3,13 @@ package com.hope.xueling.common.exception;
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.constant.ResultCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 全局异常处理类，用于处理应用程序中抛出的异常
@@ -15,6 +19,40 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * 处理数据库唯一冲突异常
+     * @param e 重复键异常对象
+     * @return 错误信息
+     */
+    @ExceptionHandler(DuplicateKeyException.class)
+    public Result<String> handleDuplicateKeyException(DuplicateKeyException e){
+        log.error("数据库唯一冲突异常",e);
+        String errorMessage = e.getMessage();
+        String friendlyMsg = "数据已存在";
+        //正则匹配：从异常信息中提取 值、字段名
+        Pattern pattern = Pattern.compile("Duplicate entry '(.*?)' for key '(.*?)'");
+        Matcher matcher = pattern.matcher(errorMessage);
+        if (matcher.find()){
+            String duplicateValue = matcher.group(1);   //冲突的值
+            String keyName = matcher.group(2);  //冲突的字段名
+
+            if(keyName.contains("username")){
+                log.info("用户名冲突");
+                friendlyMsg = String.format("用户名 %s 已被使用", duplicateValue);
+            }else if (keyName.contains("email")){
+                log.info("邮箱冲突");
+                friendlyMsg = String.format("邮箱 %s 已注册", duplicateValue);
+            }else if (keyName.contains("phone")){
+                log.info("手机号冲突");
+                friendlyMsg = String.format("手机号 %s 已绑定账号", duplicateValue);
+
+            }
+        }
+        return Result.fail(ResultCode.DUPLICATE_KEY_ERROR, friendlyMsg);
+    }
+
+
 
     /**
      * 处理验证异常

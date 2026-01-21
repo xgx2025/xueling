@@ -7,6 +7,7 @@ import javax.mail.internet.MimeMessage;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.util.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -119,24 +120,18 @@ public class EmailVerificationCodeUtils {
      * 验证验证码
      * @param email 邮箱
      * @param code 待验证的验证码
-     * @return 验证结果  true 验证成功 false 验证失败
      */
-    public boolean verifyCode(String email, String code) {
-        if (email == null || code == null) {
-            return false;
-        }
-
+    public void verifyCode(String email, String code) {
         String redisKey = REDIS_KEY_PREFIX + email;
         String storedCode = (String) stringRedisTemplate.opsForHash().get(redisKey, "code");
 
         // 验证码不存在或不匹配
         if (storedCode == null || !storedCode.equals(code)) {
-            return false;
+            throw new ValidationException("验证码错误或已过期");
         }
 
         // 验证成功后移除验证码，防止重复使用
         removeCode(email);
-        return true;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.hope.xueling.common.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.UserVO;
@@ -20,15 +22,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor  // Lombok自动生成构造器
 public class UserServiceImpl implements IUserService {
 
-    //注入依赖
-    private final UserMapper userMapper;//用户Mapper
+    private final UserMapper userMapper;
 
 
-    /**
-     * 根据用户邮箱查用户信息
-     * @param email 邮箱
-     * @return User 用户实体类
-     */
+    @Override
+    public void insertUser(User user) {
+        userMapper.insert(user);
+    }
+
     @Override
     public User getUserByEmail(String email) {
         //邮箱不能为空
@@ -39,7 +40,9 @@ public class UserServiceImpl implements IUserService {
         if (!email.matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$")) {
             throw new ValidationException("邮箱格式错误");
         }
-        return userMapper.selectByEmail(email);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        return userMapper.selectOne(queryWrapper);
     }
 
     /**
@@ -57,24 +60,22 @@ public class UserServiceImpl implements IUserService {
         if (!phone.matches("^1[3456789]\\d{9}$")) {
             throw new ValidationException("手机号格式错误");
         }
-        return userMapper.selectByPhone(phone);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone", phone);
+        return userMapper.selectOne(queryWrapper);
     }
 
-    /**
-     * 更新用户信息
-     * @param userDTO 用户数据传输对象
-     */
+
     @Override
-    public void updateUser(UserDTO userDTO) {
-        //根据用户ID更新用户信息
-        userMapper.updateById(userDTO);
+    public void updateUserById(UserDTO userDTO) {
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", userDTO.getId());
+        userMapper.update(user, updateWrapper);
     }
 
-    /**
-     * 根据用户ID获取用户信息
-     * @param id 用户ID
-     * @return UserDTO 用户数据传输对象
-     */
+
     @Override
     public UserVO getUserInfo(Long id) {
         //检查id是否为空
@@ -106,7 +107,9 @@ public class UserServiceImpl implements IUserService {
             throw new ValidationException("邮箱不能为空");
         }
         //根据邮箱查询用户密码
-        String password = userMapper.selectPasswordByEmail(email);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        String password = userMapper.selectOne(queryWrapper).getPassword();
         //如果密码为空，则抛出异常
         if (password == null) {
             //邮箱或手机号错误异常
@@ -128,7 +131,9 @@ public class UserServiceImpl implements IUserService {
             throw new ValidationException("手机号不能为空");
         }
         //根据手机号查询用户密码
-        String password = userMapper.selectPasswordByPhone(phone);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone", phone);
+        String password = userMapper.selectOne(queryWrapper).getPassword();
         //如果密码为空，则抛出异常
         if (password == null) {
             //邮箱或手机号错误异常

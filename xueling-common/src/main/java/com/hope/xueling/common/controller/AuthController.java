@@ -37,7 +37,7 @@ public class AuthController {
      * @return 登录成功后的用户信息
      */
     @RequestMapping("/login")
-    public Result login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    public Result<User> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         log.info("IP: {} 正在尝试登录, Email: {}, Phone: {}", request.getRemoteAddr(), loginDTO.getEmail(), loginDTO.getPhone());
         loginDTO.setIp(request.getRemoteAddr());
         User user = authService.login(loginDTO);

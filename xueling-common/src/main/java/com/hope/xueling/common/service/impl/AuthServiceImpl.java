@@ -5,6 +5,7 @@ import com.hope.xueling.common.domain.dto.RegisterDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.service.IAuthService;
+import com.hope.xueling.common.util.EmailVerificationCodeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
@@ -29,6 +30,10 @@ public class AuthServiceImpl implements IAuthService {
      * 密码加密器
      */
     private final BCryptPasswordEncoder passwordEncoder;
+    /**
+     * 邮箱验证码工具类
+     */
+    private final EmailVerificationCodeUtils emailVerificationCodeUtils;
 
     /**
      * 用户注册(支持邮箱或手机号注册)
@@ -59,6 +64,16 @@ public class AuthServiceImpl implements IAuthService {
         if(!StringUtils.hasText(verificationCode)){
             throw new ValidationException("验证码不能为空");
         }
+        // 验证验证码
+        emailVerificationCodeUtils.verifyCode(email, verificationCode);
+        // 密码加密
+        String encodedPassword = encodePassword(rawPassword);
+        User user = new User();
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setPassword(encodedPassword);
+        // 保存用户
+        userService.insertUser(user);
     }
 
     @Override
@@ -99,6 +114,16 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public void logout() {
+
+    }
+
+    @Override
+    public void sendEmailVerificationCode(String email,String userIP) {
+        emailVerificationCodeUtils.generateAndSendCode(email,userIP);
+    }
+
+    @Override
+    public void sendPhoneVerificationCode(String phone,String userIP) {
 
     }
 

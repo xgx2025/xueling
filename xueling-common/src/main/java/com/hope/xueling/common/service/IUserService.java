@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface IUserService {
     /**
+     * 用户注册
+     * @param userDTO 用户数据传输对象
+     */
+    void insertUser(User user);
+    /**
      * 根据用户邮箱查用户信息
      * @param email 邮箱
      * @return User 用户实体类
@@ -27,13 +32,13 @@ public interface IUserService {
     User getUserByPhone(String phone);
 
     /**
-     * 更新用户信息
+     * 根据用户ID更新用户信息
      * @param userDTO 用户数据传输对象
      */
-    void updateUser(UserDTO userDTO);
+    void updateUserById(UserDTO userDTO);
 
     /**
-     * 获取用户信息
+     * 根据用户ID获取用户信息
      * @param id 用户ID
      * @return UserDTO 用户数据传输对象
      */
