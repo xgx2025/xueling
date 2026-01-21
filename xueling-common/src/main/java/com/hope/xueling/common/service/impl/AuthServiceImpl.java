@@ -3,9 +3,9 @@ package com.hope.xueling.common.service.impl;
 import com.hope.xueling.common.domain.dto.LoginDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.service.IAuthService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 /**
@@ -15,9 +15,16 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    /**
+     * 用户服务实现类
+     */
+    private final UserServiceImpl userService;
+    /**
+     * 密码加密器
+     */
+    private final BCryptPasswordEncoder passwordEncoder;
     /**
      * 用户登录
      * @param loginDTO 登录DTO对象，包含邮箱、手机号和密码
@@ -29,18 +36,9 @@ public class AuthServiceImpl implements IAuthService {
         String phone = loginDTO.getPhone();
         String password = loginDTO.getPassword();
         if (email != null) {
-            // 验证邮箱格式
-            if (!email.matches("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z0-9]{2,6}$")) {
-                log.warn("邮箱格式无效");
-                throw new ValidationException("邮箱格式无效");
-            }
             log.info("正在使用邮箱: {} 登录", email);
         } else if (phone != null) {
-            // 验证手机号格式
-            if (!phone.matches("^1[3456789]\\d{9}$")) {
-                log.warn("手机号格式无效");
-               throw new ValidationException("手机号格式无效");
-            }
+            userService.getUserByPhone(phone);
             log.info("正在使用手机号: {} 登录", phone);
         } else {
             // 无效登录方式
