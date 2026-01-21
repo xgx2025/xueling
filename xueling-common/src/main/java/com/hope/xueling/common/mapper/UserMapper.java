@@ -1,6 +1,7 @@
 package com.hope.xueling.common.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -22,4 +23,10 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Select("select * from user where phone = #{phone}")
     User selectByPhone(String phone);
+
+    /**
+     * 根据用户ID更新用户信息
+     * @param userDTO 用户数据传输对象
+     */
+    void updateById(UserDTO userDTO);
 }

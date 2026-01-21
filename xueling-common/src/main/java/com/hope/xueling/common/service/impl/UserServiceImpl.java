@@ -1,14 +1,19 @@
 package com.hope.xueling.common.service.impl;
 
+import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
+import com.hope.xueling.common.domain.vo.UserVO;
 import com.hope.xueling.common.exception.BaseException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.common.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
  * 用户服务实现类
+ * @author 谢光益
+ * @date 2026/1/20
  */
 @Service
 @RequiredArgsConstructor  // Lombok自动生成构造器
@@ -54,5 +59,39 @@ public class UserServiceImpl implements UserService {
             return userMapper.selectByPhone(phone);
         }
         return null;
+    }
+
+    /**
+     * 更新用户信息
+     * @param userDTO 用户数据传输对象
+     */
+    @Override
+    public void updateUser(UserDTO userDTO) {
+        //根据用户ID更新用户信息
+        userMapper.updateById(userDTO);
+    }
+
+    /**
+     * 根据用户ID获取用户信息
+     * @param id 用户ID
+     * @return UserDTO 用户数据传输对象
+     */
+    @Override
+    public UserVO getUserInfo(Long id) {
+        //检查id是否为空
+        if (id == null) {
+            //用户ID不能为空异常
+            throw new BaseException("用户ID不能为空");
+        }
+        //根据用户ID查询用户信息
+        User user = userMapper.selectById(id);
+        if (user != null) {
+            //将用户实体类转换为用户数据传输对象
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }
+        //用户不存在异常
+        throw new BaseException("用户不存在");
     }
 }

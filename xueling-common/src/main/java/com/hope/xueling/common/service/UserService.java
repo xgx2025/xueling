@@ -1,15 +1,21 @@
 package com.hope.xueling.common.service;
 
+import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
+import com.hope.xueling.common.domain.vo.UserVO;
 import org.springframework.stereotype.Service;
 
 /**
  * 用户服务接口
+ * @author 谢光益
+ * @date 2026/1/20
  */
 @Service
 public interface UserService {
     /**
      * 根据用户邮箱查用户信息
+     * @param email 邮箱
+     * @return User 用户实体类
      */
     User getUserByEmail(String email);
 
@@ -19,4 +25,17 @@ public interface UserService {
      * @return User 用户实体类
      */
     User getUserByPhone(String phone);
+
+    /**
+     * 更新用户信息
+     * @param userDTO 用户数据传输对象
+     */
+    void updateUser(UserDTO userDTO);
+
+    /**
+     * 获取用户信息
+     * @param id 用户ID
+     * @return UserDTO 用户数据传输对象
+     */
+    UserVO getUserInfo(Long id);
 }
