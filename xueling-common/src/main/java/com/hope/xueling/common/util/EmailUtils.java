@@ -1,7 +1,5 @@
 package com.hope.xueling.common.util;
 
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +15,6 @@ import java.util.Properties;
  * @since 2026/1/21
  */
 @Component
-@RequiredArgsConstructor
 public class EmailUtils {
     @Value("${email.host}")
     private  String SMTP_HOST ;
