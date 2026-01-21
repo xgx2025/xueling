@@ -2,14 +2,14 @@ package com.hope.xueling.common.service.impl;
 
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.mapper.UserMapper;
-import com.hope.xueling.common.service.UserService;
+import com.hope.xueling.common.service.IUserService;
 import org.springframework.stereotype.Service;
 
 /**
  * 用户服务实现类
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     //注入依赖
 

@@ -3,6 +3,7 @@ package com.hope.xueling.common.service.impl;
 import com.hope.xueling.common.domain.dto.LoginDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.service.IAuthService;
+import com.hope.xueling.common.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
@@ -20,7 +21,7 @@ public class AuthServiceImpl implements IAuthService {
     /**
      * 用户服务实现类
      */
-    private final UserServiceImpl userService;
+    private final IUserService userService;
     /**
      * 密码加密器
      */
@@ -35,11 +36,22 @@ public class AuthServiceImpl implements IAuthService {
         String email = loginDTO.getEmail();
         String phone = loginDTO.getPhone();
         String password = loginDTO.getPassword();
+        String dbPassword = null;
         if (email != null) {
+            dbPassword = userService.getPasswordByEmail(email);
             log.info("正在使用邮箱: {} 登录", email);
+            if(!checkPassword(password, dbPassword)) {
+                throw new ValidationException("账号或密码错误");
+            }
+            return userService.getUserByEmail(email);
+
         } else if (phone != null) {
-            userService.getUserByPhone(phone);
+            dbPassword = userService.getPasswordByPhone(phone);
             log.info("正在使用手机号: {} 登录", phone);
+            if(!checkPassword(password, dbPassword)) {
+                throw new ValidationException("账号或密码错误");
+            }
+            return userService.getUserByPhone(phone);
         } else {
             // 无效登录方式
             log.warn("无效的登录方式");
