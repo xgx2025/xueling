@@ -77,3 +77,8 @@ spring:
   #        deny: 192.168.1.100          # 禁止访问的IP（可选）
 
 
+email:
+  host: smtp.qq.com
+  port: 465
+  username: ${email_username}
+  password: ${email_key}  # SMTP授权码

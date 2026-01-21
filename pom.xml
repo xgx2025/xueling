@@ -39,8 +39,26 @@
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
         <druid.version>1.2.21</druid.version>
+        <commons-email.version>1.5</commons-email.version>
     </properties>
     <dependencies>
+        <!--  邮箱服务  -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>${commons-email.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
         <!-- spring security 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,7 @@
 package com.hope.xueling.common.controller;
 
 import com.hope.xueling.common.domain.dto.LoginDTO;
+import com.hope.xueling.common.domain.dto.RegisterDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.service.IAuthService;
@@ -22,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     @Autowired
     private IAuthService authService;
+
+    @RequestMapping("/register")
+    public Result<String> register(@RequestBody RegisterDTO registerDTO) {
+        authService.register(registerDTO);
+        return Result.success("注册成功");
+    }
+
     /**
      * 登录
      * @param loginDTO 登录数据传输对象
@@ -39,10 +47,7 @@ public class AuthController {
     public String logout() {
         return "logout";
     }
-    @RequestMapping("/register")
-    public String register() {
-        return "register";
-    }
+
     @RequestMapping("/forget")
     public String forget() {
         return "forget";

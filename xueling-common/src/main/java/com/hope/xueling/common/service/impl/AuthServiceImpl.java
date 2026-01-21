@@ -1,6 +1,7 @@
 package com.hope.xueling.common.service.impl;
 
 import com.hope.xueling.common.domain.dto.LoginDTO;
+import com.hope.xueling.common.domain.dto.RegisterDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.service.IAuthService;
@@ -28,11 +29,38 @@ public class AuthServiceImpl implements IAuthService {
      * 密码加密器
      */
     private final BCryptPasswordEncoder passwordEncoder;
+
     /**
-     * 用户登录
-     * @param loginDTO 登录DTO对象，包含邮箱、手机号和密码
-     * @return 登录成功的用户对象，登录失败返回null
+     * 用户注册(支持邮箱或手机号注册)
+     * @param registerDTO 注册DTO对象，包含用户名、密码、确认密码、邮箱、手机号
      */
+    @Override
+    public void register(RegisterDTO registerDTO) {
+        // 检验参数
+        String email = registerDTO.getEmail();
+        String phone = registerDTO.getPhone();
+        String rawPassword = registerDTO.getPassword();
+        String confirmPassword = registerDTO.getConfirmPassword();
+        String verificationCode = registerDTO.getVerificationCode();
+
+        boolean isEmailRegister = StringUtils.hasText(email);
+        boolean isPhoneRegister = StringUtils.hasText(phone);
+        if(!isEmailRegister && !isPhoneRegister){
+            throw new ValidationException("邮箱或手机号不能为空");
+        }
+        String passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        if(!StringUtils.hasText(rawPassword) || !rawPassword.matches(passwordRegex)){
+            throw new ValidationException("密码格式错误，密码至少8位，包含大小写字母和数字");
+        }
+        if(!rawPassword.equals(confirmPassword)){
+            throw new ValidationException("两次输入的密码不一致");
+        }
+        //验证验证码
+        if(!StringUtils.hasText(verificationCode)){
+            throw new ValidationException("验证码不能为空");
+        }
+    }
+
     @Override
     public User login(LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
@@ -67,6 +95,11 @@ public class AuthServiceImpl implements IAuthService {
         }else {
             return userService.getUserByPhone(phone);
         }
+    }
+
+    @Override
+    public void logout() {
+
     }
 
     /**
