@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @date 2026/1/20
  */
 @Service
-public interface UserService {
+public interface IUserService {
     /**
      * 根据用户邮箱查用户信息
      * @param email 邮箱
@@ -38,4 +38,18 @@ public interface UserService {
      * @return UserDTO 用户数据传输对象
      */
     UserVO getUserInfo(Long id);
+
+    /**
+     * 根据用户email查询密码
+     * @param email 邮箱
+     * @return String 密码
+     */
+    String getPasswordByEmail(String email);
+
+    /**
+     * 根据用户phone查询密码
+     * @param phone 手机号
+     * @return String 密码
+     */
+    String getPasswordByPhone(String phone);
 }

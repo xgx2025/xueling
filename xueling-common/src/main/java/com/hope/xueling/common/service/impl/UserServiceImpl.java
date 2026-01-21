@@ -5,7 +5,7 @@ import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.UserVO;
 import com.hope.xueling.common.exception.BaseException;
 import com.hope.xueling.common.mapper.UserMapper;
-import com.hope.xueling.common.service.UserService;
+import com.hope.xueling.common.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor  // Lombok自动生成构造器
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     //注入依赖
     private final UserMapper userMapper;//用户Mapper
@@ -93,5 +93,49 @@ public class UserServiceImpl implements UserService {
         }
         //用户不存在异常
         throw new BaseException("用户不存在");
+    }
+
+    /**
+     * 根据邮箱和手机号获取密码
+     * @param email 邮箱
+     * @return String 密码
+     */
+    @Override
+    public String getPasswordByEmail(String email) {
+        //检查邮箱是否为空
+        if (email == null) {
+            //邮箱不能为空异常
+            throw new BaseException("邮箱不能为空");
+        }
+        //根据邮箱查询用户密码
+        String password = userMapper.selectPasswordByEmail(email);
+        //如果密码为空，则抛出异常
+        if (password == null) {
+            //邮箱或手机号错误异常
+            throw new BaseException("不存在该邮箱");
+        }
+        return password;
+    }
+
+    /**
+     * 根据手机号获取密码
+     * @param phone 手机号
+     * @return String 密码
+     */
+    @Override
+    public String getPasswordByPhone(String phone) {
+        //检查手机号是否为空
+        if (phone == null) {
+            //手机号不能为空异常
+            throw new BaseException("手机号不能为空");
+        }
+        //根据手机号查询用户密码
+        String password = userMapper.selectPasswordByPhone(phone);
+        //如果密码为空，则抛出异常
+        if (password == null) {
+            //邮箱或手机号错误异常
+            throw new BaseException("不存在该手机号");
+        }
+        return password;
     }
 }
