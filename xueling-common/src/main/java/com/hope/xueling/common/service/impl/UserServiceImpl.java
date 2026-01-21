@@ -4,21 +4,19 @@ import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.exception.BaseException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.common.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
  * 用户服务实现类
  */
 @Service
+@RequiredArgsConstructor  // Lombok自动生成构造器
 public class UserServiceImpl implements UserService {
 
     //注入依赖
-
     private final UserMapper userMapper;//用户Mapper
 
-    public UserServiceImpl(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     /**
      * 根据用户邮箱查用户信息
