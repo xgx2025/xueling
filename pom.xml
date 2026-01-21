@@ -40,8 +40,30 @@
         <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
         <druid.version>1.2.21</druid.version>
         <commons-email.version>1.5</commons-email.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
     </properties>
     <dependencies>
+
+        <!-- JWT 相关依赖-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <!--  上面OSS已经配置了-->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <!--Junit5依赖-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--  邮箱服务  -->
         <dependency>
             <groupId>org.apache.commons</groupId>

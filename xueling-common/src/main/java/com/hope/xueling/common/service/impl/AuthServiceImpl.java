@@ -6,12 +6,16 @@ import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.service.IAuthService;
 import com.hope.xueling.common.util.EmailVerificationCodeUtils;
+import com.hope.xueling.common.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 认证服务实现类，处理用户登录、注册等操作
@@ -77,7 +81,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public User login(LoginDTO loginDTO) {
+    public Map<String,String> login(LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
         String phone = loginDTO.getPhone();
         String rawPassword = loginDTO.getPassword();
@@ -104,12 +108,14 @@ public class AuthServiceImpl implements IAuthService {
             log.warn("账号: {} 登录失败，密码错误", account);
             throw new BusinessException("账号或密码错误");
         }
-
+        User user;
         if (isEmailLogin){
-            return userService.getUserByEmail(email);
+             user = userService.getUserByEmail(email);
         }else {
-            return userService.getUserByPhone(phone);
+             user = userService.getUserByPhone(phone);
         }
+        // 生成双token
+        return generateTokens(user);
     }
 
     @Override
@@ -125,6 +131,19 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public void sendPhoneVerificationCode(String phone,String userIP) {
 
+    }
+
+    /**
+     * 生成双token（访问令牌和刷新令牌）
+     * @param user 用户实体对象
+     * @return 包含访问令牌和刷新令牌的Map对象
+     */
+    public Map<String, String> generateTokens(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        String accessToken = JwtTokenUtils.generateAccessToken(claims);
+        String refreshToken = JwtTokenUtils.generateRefreshToken(claims);
+        return Map.of("accessToken",accessToken,"refreshToken",refreshToken);
     }
 
     /**
