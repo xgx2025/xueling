@@ -1,16 +1,14 @@
-package com.hope.xueling.common.domain.entity;
+package com.hope.xueling.common.domain.vo;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
- * 用户实体类
+ * 用户视图对象
  * @author 谢光益
  * @date 2026/1/21
  */
 @Data
-@NoArgsConstructor
-public class User {
+public class UserVO {
     //用户ID
     private Long id;
     //用户名
@@ -19,8 +17,6 @@ public class User {
     private String email;
     //手机号
     private String phone;
-    //密码
-    private String password;
     //昵称
     private String nickname;
     //头像URL
@@ -31,4 +27,10 @@ public class User {
     private String birthday;
     //个人简介
     private String bio;
+    //vip等级
+    private Integer vipLevel;
+    //vip开始时间
+    private String vipStartTime;
+    //vip到期时间
+    private String vipExpireTime;
 }

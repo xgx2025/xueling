@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
 
     //注入依赖
 
-    private final UserMapper userMapper;//用户Mapper
+     private final UserMapper userMapper;//用户Mapper
 
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
