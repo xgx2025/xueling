@@ -41,6 +41,11 @@
         <druid.version>1.2.21</druid.version>
     </properties>
     <dependencies>
+        <!-- spring security 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
         <!--lombok依赖-->
         <dependency>
             <groupId>org.projectlombok</groupId>
