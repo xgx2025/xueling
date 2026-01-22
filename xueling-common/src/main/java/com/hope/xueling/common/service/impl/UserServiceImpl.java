@@ -25,8 +25,6 @@ public class UserServiceImpl implements IUserService {
 
     private final UserMapper userMapper;
 
-
-
     @Override
     public void insertUser(User user) {
         long userId = IdUtil.getSnowflakeNextId();
@@ -144,5 +142,18 @@ public class UserServiceImpl implements IUserService {
             throw new BusinessException("不存在该手机号");
         }
         return password;
+    }
+
+    @Override
+    public void cancelUserAccount(Long userId, String verificationCode) {
+        //检查用户ID是否为空
+        if (userId == null) {
+            //用户ID不能为空异常
+            throw new ValidationException("用户ID不能为空");
+        }
+
+        //TODO 验证码校验
+
+        //TODO 注销用户账号
     }
 }

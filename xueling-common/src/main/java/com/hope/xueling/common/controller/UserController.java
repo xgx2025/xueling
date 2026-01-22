@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 用户控制器
+ * 用户控制器(用户修改用户信息、获取用户信息、用户注销)
  * @author 谢光益
  * @since 2026/1/20
  */
@@ -22,7 +22,7 @@ public class UserController {
 
     private final UserServiceImpl userService;
 
-    //TODO 用户登录、注册、忘记密码、修改密码、修改用户信息、获取用户信息、用户注销
+    //TODO 用户修改用户信息、获取用户信息、用户注销
 
      //TODO 获取用户信息
     /**
@@ -52,7 +52,19 @@ public class UserController {
         return Result.success("用户信息更新成功");
     }
 
-    //TODO 修改密码
-
-    //TODO 忘记密码
+    //TODO 注销用户
+    /**
+     * 注销用户(发起注销 → 手机验证码 → 执行注销)
+     * @param verificationCode 验证码
+     * @return Result<String> 结果对象，包含注销成功的消息
+     */
+    @PostMapping("/cancel/")
+    public Result<String> cancel(@RequestParam String verificationCode) {
+        //TODO 获取当前用户ID
+        Long userId;
+        log.info("正在注销用户{}", userId);
+        userService.cancelUserAccount(userId, verificationCode);
+        log.info("用户{}注销成功", userId);
+        return Result.success("用户注销成功");
+    }
 }
