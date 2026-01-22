@@ -77,6 +77,18 @@ spring:
   #        deny: 192.168.1.100          # 禁止访问的IP（可选）
 
 
+  data:
+    redis:
+      database: 1
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 100 # 连接等待时间（毫秒）
+
 email:
   host: smtp.qq.com
   port: 465
