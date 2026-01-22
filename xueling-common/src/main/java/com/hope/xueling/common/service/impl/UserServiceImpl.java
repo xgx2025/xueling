@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  * @since 2026/1/20
  */
 @Service
-@RequiredArgsConstructor  // Lombok自动生成构造器
+@RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
 
     private final UserMapper userMapper;
