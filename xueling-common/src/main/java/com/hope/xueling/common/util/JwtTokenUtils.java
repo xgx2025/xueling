@@ -19,14 +19,14 @@ public class JwtTokenUtils {
     /**
      * Access Token密钥和过期时间(30分钟)
      */
-    public static final long ACCESS_TOKEN_EXPIRE = 2 * 60 * 60 * 1000;
+    public static final long ACCESS_TOKEN_EXPIRE = 30 * 60 * 1000;
 
 
     public static final String REFRESH_TOKEN_SECRET = "xueling_refresh_secret";
     /**
      * Refresh Token密钥和过期时间(7天)
      */
-    public static final long REFRESH_TOKEN_EXPIRE = 2 * 24 * 60 * 60 * 1000;
+    public static final long REFRESH_TOKEN_EXPIRE = 7 * 24 * 60 * 60 * 1000;
 
 
     /**

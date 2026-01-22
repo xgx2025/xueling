@@ -3,14 +3,12 @@ package com.hope.xueling.common.service;
 import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.UserVO;
-import org.springframework.stereotype.Service;
 
 /**
  * 用户服务接口
  * @author 谢光益
  * @since 2026/1/20
  */
-@Service
 public interface IUserService {
     /**
      * 用户注册

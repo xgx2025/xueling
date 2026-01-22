@@ -1,13 +1,23 @@
 package com.hope.xueling.common.controller;
 
+import com.hope.xueling.common.constant.ResultCode;
 import com.hope.xueling.common.domain.dto.LoginDTO;
 import com.hope.xueling.common.domain.dto.RegisterDTO;
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.service.IAuthService;
+import com.hope.xueling.common.util.JwtTokenUtils;
+import com.hope.xueling.common.util.ThreadLocalUtils;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
 
 import java.util.Map;
 
@@ -23,6 +33,7 @@ import java.util.Map;
 public class AuthController {
 
     private final IAuthService authService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 用户注册
@@ -32,21 +43,28 @@ public class AuthController {
     @PostMapping("/register")
     public Result<String> register(@RequestBody RegisterDTO registerDTO) {
         authService.register(registerDTO);
-        return Result.success(null);
+        return Result.success(null, "注册成功");
     }
 
     /**
      * 登录
      * @param loginDTO 登录数据传输对象
      * @param request HttpServletRequest对象
-     * @return 登录成功后返回访问令牌和刷新令牌
+     * @return 登录成功后返回访问令牌（data中）和刷新令牌（Set-Cookie中）
      */
     @PostMapping("/login")
-    public Result<Map<String,String>> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    public ResponseEntity<Result<String>> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         log.info("IP: {} 正在尝试登录, Email: {}, Phone: {}", request.getRemoteAddr(), loginDTO.getEmail(), loginDTO.getPhone());
         loginDTO.setIp(request.getRemoteAddr());
         Map<String,String> tokens = authService.login(loginDTO);
-        return Result.success(tokens);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken",tokens.get("refreshToken"))
+                .httpOnly(true)     //防止XSS攻击
+                .path("/")
+                .maxAge(JwtTokenUtils.REFRESH_TOKEN_EXPIRE / 1000)
+                .build();
+        response.addHeader("Set-Cookie", refreshCookie.toString());
+
+        return ResponseEntity.ok(Result.success(tokens.get("accessToken")));
     }
 
     /**
@@ -58,17 +76,74 @@ public class AuthController {
     public Result<String> sendVerificationCode(@RequestParam String email, HttpServletRequest request) {
         log.info("IP: {} 正在尝试发送邮箱验证码, Email: {}", request.getRemoteAddr(), email);
         authService.sendEmailVerificationCode(email, request.getRemoteAddr());
-        return Result.success(null);
+        return Result.success(null, "验证码已发送");
     }
 
 
+
+    /**
+     * 用户登出
+     * @return 登出结果
+     */
     @PostMapping("/logout")
-    public String logout() {
-        return "logout";
+    public Result<String> logout() {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        authService.logout(userId.toString());
+        return Result.success(null, "已成功退出登录");
     }
+
+
 
     @PostMapping("/forget")
     public String forget() {
         return "forget";
+    }
+
+    /**
+     * 刷新访问令牌
+     * @param request HttpServletRequest对象
+     * @param response HttpServletResponse对象
+     * @return 刷新成功后返回新的访问令牌（data中）和刷新令牌（Set-Cookie中）
+     */
+    @GetMapping("/refreshToken")
+    public ResponseEntity<Result<String>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        //从请求的HttpOnlyCookie中获取刷新令牌
+        Cookie refreshCookie = WebUtils.getCookie(request, "refreshToken");
+        if (refreshCookie == null){
+            return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED,"登录已过期，请重新登录"));
+        }
+        String refreshToken = refreshCookie.getValue();
+        try {
+            Claims claims = JwtTokenUtils.getClaimsFromToken(refreshToken, JwtTokenUtils.REFRESH_TOKEN_SECRET);
+            String userId = String.valueOf(claims.get("userId"));
+
+            // 校验 Redis 中的 refreshToken
+            String redisKey = "refreshToken:" + userId;
+            String savedRefreshToken = stringRedisTemplate.opsForValue().get(redisKey);
+
+            if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+                return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED, "登录状态失效，请重新登录"));
+            }
+
+            Map<String,Object> map = Map.of("userId",userId);
+            String newAccessToken = JwtTokenUtils.generateAccessToken(map);
+            String newRefreshToken = JwtTokenUtils.generateRefreshToken(map);
+
+            // 将新的 refreshToken 存入 Redis
+            stringRedisTemplate.opsForValue().set(redisKey, newRefreshToken, JwtTokenUtils.REFRESH_TOKEN_EXPIRE, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+            //设置新的刷新令牌到HttpOnlyCookie中
+            ResponseCookie newRefreshCookie = ResponseCookie.from("refreshToken",newRefreshToken)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(JwtTokenUtils.REFRESH_TOKEN_EXPIRE / 1000)
+                    .build();
+            response.addHeader("Set-Cookie", newRefreshCookie.toString());
+            return ResponseEntity.ok(Result.success(newAccessToken));
+        } catch (Exception e) {
+            log.error("刷新令牌失败: {}", e.getMessage());
+            return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED,"登录已过期，请重新登录"));
+        }
     }
 }
