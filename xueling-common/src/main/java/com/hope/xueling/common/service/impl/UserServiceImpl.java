@@ -1,7 +1,6 @@
 package com.hope.xueling.common.service.impl;
 
-
-import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.hope.xueling.common.domain.dto.UserDTO;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Service;
  * @since 2026/1/20
  */
 @Service
-@RequiredArgsConstructor  // Lombok自动生成构造器
+@RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
 
     private final UserMapper userMapper;
@@ -30,8 +29,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void insertUser(User user) {
-        Snowflake snowflake = new Snowflake(1, 1);
-        user.setId(snowflake.nextId());
+        long userId = IdUtil.getSnowflakeNextId();
+        user.setId(userId);
         userMapper.insert(user);
     }
 
