@@ -6,6 +6,7 @@ import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.exception.ValidationException;
 import com.hope.xueling.common.service.IAuthService;
+import com.hope.xueling.common.service.IUserService;
 import com.hope.xueling.common.util.EmailVerificationCodeUtils;
 import com.hope.xueling.common.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
     /**
-     * 用户服务实现类
+     * 用户服务接口
      */
-    private final UserServiceImpl userService;
+    private final IUserService userService;
     /**
      * 密码加密器
      */
@@ -95,27 +96,23 @@ public class AuthServiceImpl implements IAuthService {
         String email = loginDTO.getEmail();
         String phone = loginDTO.getPhone();
         String rawPassword = loginDTO.getPassword();
-        User user = null;
 
-        if(!StringUtils.hasText(rawPassword)){
+        if (!StringUtils.hasText(rawPassword)) {
             throw new ValidationException("密码不能为空");
         }
 
-        boolean isEmailLogin = StringUtils.hasText(email);
-        boolean isPhoneLogin = StringUtils.hasText(phone);
-
-        if (isEmailLogin){
+        User user = null;
+        if (StringUtils.hasText(email)) {
             user = userService.getUserByEmailWithPassword(email);
-        }else if (isPhoneLogin) {
+        } else if (StringUtils.hasText(phone)) {
             user = userService.getUserByPhoneWithPassword(phone);
-        }else {
-            log.warn("登录失败，未提供邮箱或手机号");
-            throw new BusinessException("无效的登录方式,请提供邮箱或手机号");
+        } else {
+            log.warn("登录失败，未提供有效的登录账号");
+            throw new BusinessException("请提供邮箱或手机号");
         }
 
         if (user == null || !checkPassword(rawPassword, user.getPassword())) {
-            String account = isEmailLogin ? email : phone;
-            log.warn("账号: {} 登录失败，密码错误", account);
+            log.warn("用户登录失败。Email: {}, Phone: {}", email, phone);
             throw new BusinessException("账号或密码错误");
         }
 
