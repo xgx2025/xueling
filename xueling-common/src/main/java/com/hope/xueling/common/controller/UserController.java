@@ -7,19 +7,17 @@ import com.hope.xueling.common.domain.vo.UserVO;
 import com.hope.xueling.common.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.UserDatabase;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户控制器
  * @author 谢光益
- * @date 2026/1/20
+ * @since 2026/1/20
  */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserServiceImpl userService;
@@ -29,7 +27,7 @@ public class UserController {
      //TODO 获取用户信息
     /**
      * 根据用户ID获取用户信息
-     * @param
+     * @param id 用户ID
      * @return Result<UserVO> 结果对象，包含用户信息
      */
     @GetMapping("/info/{id}")

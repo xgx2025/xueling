@@ -1,6 +1,12 @@
 package com.hope.xueling.common.exception;
 
-public class ValidationException extends BusinessException {
+/**
+ * 验证异常类，用于表示验证失败的异常。
+ * 用于手动参数校验失败，比如“参数为空”、“参数格式错误”。
+ * @author 谢光湘
+ * @since 2026/1/21
+ */
+public class ValidationException extends BaseException {
     public ValidationException(String message) {
         super(message);
     }

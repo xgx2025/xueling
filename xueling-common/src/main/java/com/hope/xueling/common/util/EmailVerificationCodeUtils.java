@@ -56,7 +56,7 @@ public class EmailVerificationCodeUtils {
     private String SMTP_HOST;
     @Value("${email.port}")
     private String SMTP_PORT;
-    @Value("${email.user}")
+    @Value("${email.username}")
     private String SMTP_USER;
     @Value("${email.password}")
     private String SMTP_PASSWORD; // SMTP授权码

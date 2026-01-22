@@ -2,7 +2,6 @@ package com.hope.xueling.common.service;
 
 import com.hope.xueling.common.domain.dto.LoginDTO;
 import com.hope.xueling.common.domain.dto.RegisterDTO;
-import com.hope.xueling.common.domain.entity.User;
 
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public interface IAuthService {
      /**
       * 用户登出
       */
-    void logout();
+    void logout(String userId);
 
      /**
       * 发送邮箱验证码

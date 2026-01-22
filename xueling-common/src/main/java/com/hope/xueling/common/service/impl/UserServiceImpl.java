@@ -1,5 +1,7 @@
 package com.hope.xueling.common.service.impl;
 
+
+import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.hope.xueling.common.domain.dto.UserDTO;
@@ -25,13 +27,16 @@ public class UserServiceImpl implements IUserService {
     private final UserMapper userMapper;
 
 
+
     @Override
     public void insertUser(User user) {
+        Snowflake snowflake = new Snowflake(1, 1);
+        user.setId(snowflake.nextId());
         userMapper.insert(user);
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public User getUserByEmailWithPassword(String email) {
         //邮箱不能为空
         if (email == null) {
             throw new ValidationException("邮箱不能为空");
@@ -51,7 +56,7 @@ public class UserServiceImpl implements IUserService {
      * @return User 用户实体类
      */
     @Override
-    public User getUserByPhone(String phone) {
+    public User getUserByPhoneWithPassword(String phone) {
         //手机号不能为空
         if (phone == null) {
             throw new ValidationException("手机号不能为空");
