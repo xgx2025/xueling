@@ -26,6 +26,7 @@ public interface IAuthService {
 
      /**
       * 用户登出
+      * @param userId 用户ID
       */
     void logout(String userId);
 
