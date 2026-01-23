@@ -55,4 +55,11 @@ public interface IUserService {
      * @return String 密码
      */
     String getPasswordByPhone(String phone);
+
+    /**
+     * 注销用户(发起注销 → 手机验证码 → 执行注销)
+     * @param userId 用户ID
+     * @param verificationCode 验证码
+     */
+    void cancelUserAccount(Long userId, String verificationCode);
 }
