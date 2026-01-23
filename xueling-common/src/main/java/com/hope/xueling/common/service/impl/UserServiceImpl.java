@@ -31,7 +31,8 @@ public class UserServiceImpl implements IUserService {
         user.setId(userId);
         //查询此时用户总数
         long count = userMapper.selectCount(null);
-        user.setUsername("学灵"+count+1);
+        long index = count + 1;
+        user.setUsername("学灵"+index);
         userMapper.insert(user);
     }
 
