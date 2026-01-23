@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 用户视图对象
  * @author 谢光益
- * @date 2026/1/21
+ * @since 2026/1/21
  */
 @Data
 public class UserVO {
@@ -17,8 +17,6 @@ public class UserVO {
     private String email;
     //手机号
     private String phone;
-    //昵称
-    private String nickname;
     //头像URL
     private String avatarUrl;
     //性别

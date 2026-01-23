@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 /**
  * 用户实体类
  * @author 谢光益
- * @date 2026/1/21
+ * @since 2026/1/21
  */
 @Data
 @NoArgsConstructor
@@ -21,8 +21,6 @@ public class User {
     private String phone;
     //密码
     private String password;
-    //昵称
-    private String nickname;
     //头像URL
     private String avatarUrl;
     //性别

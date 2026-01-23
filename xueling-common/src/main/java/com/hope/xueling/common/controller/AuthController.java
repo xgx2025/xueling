@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping
+@RequestMapping("/auth")
 public class AuthController {
 
     private final IAuthService authService;
@@ -64,7 +64,7 @@ public class AuthController {
                 .build();
         response.addHeader("Set-Cookie", refreshCookie.toString());
 
-        return ResponseEntity.ok(Result.success(tokens.get("accessToken")));
+        return ResponseEntity.ok(Result.success(tokens.get("accessToken"), "登录成功"));
     }
 
     /**

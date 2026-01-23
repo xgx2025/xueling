@@ -29,6 +29,9 @@ public class UserServiceImpl implements IUserService {
     public void insertUser(User user) {
         long userId = IdUtil.getSnowflakeNextId();
         user.setId(userId);
+        //查询此时用户总数
+        long count = userMapper.selectCount(null);
+        user.setUsername("学灵"+count+1);
         userMapper.insert(user);
     }
 
