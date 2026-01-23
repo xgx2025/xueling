@@ -64,7 +64,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new ValidationException("邮箱或手机号不能为空");
         }
         String passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
-        if(!StringUtils.hasText(rawPassword) || !rawPassword.matches(passwordRegex)){
+        if (!StringUtils.hasText(rawPassword) || !rawPassword.matches(passwordRegex)) {
             throw new ValidationException("密码格式错误，密码至少8位，包含大小写字母和数字");
         }
         if(!rawPassword.equals(confirmPassword)){

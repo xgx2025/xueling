@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 /**
  * 用户数据传输对象
  * @author 谢光益
- * @date 2026/1/21
+ * @since 2026/1/21
  */
 @Data
 @NoArgsConstructor
@@ -19,8 +19,6 @@ public class UserDTO {
     private String email;
     //手机号
     private String phone;
-    //昵称
-    private String nickname;
     //头像URL
     private String avatarUrl;
     //性别

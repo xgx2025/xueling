@@ -3,7 +3,6 @@ package com.hope.xueling.common.util;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
