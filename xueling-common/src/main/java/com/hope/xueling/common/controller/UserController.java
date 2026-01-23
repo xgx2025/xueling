@@ -61,7 +61,7 @@ public class UserController {
     @PostMapping("/cancel/")
     public Result<String> cancel(@RequestParam String verificationCode) {
         //TODO 获取当前用户ID
-        Long userId;
+        Long userId = 1L;
         log.info("正在注销用户{}", userId);
         userService.cancelUserAccount(userId, verificationCode);
         log.info("用户{}注销成功", userId);
