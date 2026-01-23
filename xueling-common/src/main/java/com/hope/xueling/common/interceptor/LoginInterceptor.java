@@ -30,6 +30,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("IP: {} 正在尝试访问 {}", request.getRemoteAddr(), request.getRequestURI());
         String authorization = request.getHeader("Authorization");
         try{
+            if (authorization == null || !authorization.startsWith("Bearer ")) {
+                throw new RuntimeException("无效的Token");
+            }
             String token = authorization.substring(7).trim();
             Claims claims = JwtTokenUtils.getClaimsFromToken(token, JwtTokenUtils.ACCESS_TOKEN_SECRET);
             ThreadLocalUtils.set(claims);
@@ -39,6 +42,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
+    }
+
+    @Override
+    public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) {
+        ThreadLocalUtils.remove();
     }
 
 }

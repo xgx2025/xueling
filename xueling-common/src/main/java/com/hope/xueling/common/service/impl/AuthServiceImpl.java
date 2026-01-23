@@ -144,7 +144,7 @@ public class AuthServiceImpl implements IAuthService {
      * @return 包含访问令牌和刷新令牌的Map对象
      */
     public Map<String, String> generateTokens(User user) {
-        String userId = user.getId().toString();
+        Long userId = user.getId();
         //移除旧的刷新令牌
         stringRedisTemplate.delete(REDIS_KEY_PREFIX+userId);
         Map<String, Object> claims = new HashMap<>();
