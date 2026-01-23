@@ -5,6 +5,8 @@ import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.domain.vo.UserVO;
 import com.hope.xueling.common.service.impl.UserServiceImpl;
+import com.hope.xueling.common.util.ThreadLocalUtils;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +29,13 @@ public class UserController {
      //TODO 获取用户信息
     /**
      * 根据用户ID获取用户信息
-     * @param id 用户ID
      * @return Result<UserVO> 结果对象，包含用户信息
      */
-    @GetMapping("/info/{id}")
-    public Result<UserVO> info(@PathVariable Long id) {
-        log.info("正在获取{}用户信息", id);
-        UserVO userInfo = userService.getUserInfo(id);
+    @GetMapping("/info")
+    public Result<UserVO> info() {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        UserVO userInfo = userService.getUserInfo(userId);
         log.info("用户信息获取成功: {}", userInfo);
         return Result.success(userInfo);
     }

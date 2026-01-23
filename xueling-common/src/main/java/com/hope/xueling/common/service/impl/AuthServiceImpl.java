@@ -124,7 +124,7 @@ public class AuthServiceImpl implements IAuthService {
     public void logout(String userId) {
         // 删除Redis中的刷新令牌
         stringRedisTemplate.delete(REDIS_KEY_PREFIX+userId);
-
+        log.info("用户{}已登出，刷新令牌已删除", userId);
     }
 
     @Override
