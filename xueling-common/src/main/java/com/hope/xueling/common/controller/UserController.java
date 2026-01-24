@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户控制器(用户修改用户信息、获取用户信息、用户注销)
@@ -52,6 +53,16 @@ public class UserController {
         userService.updateUserById(userDTO);
         log.info("用户信息更新成功");
         return Result.success("用户信息更新成功");
+    }
+
+
+    @PutMapping("/profile/avatar")
+    public Result<String> updateAvatar(@RequestParam("file")MultipartFile avatar){
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        String url = userService.uploadAvatar(userId, avatar);
+        log.info("用户{}头像更新成功: {}", userId, url);
+        return Result.success(url, "用户头像更新成功");
     }
 
     //TODO 注销用户

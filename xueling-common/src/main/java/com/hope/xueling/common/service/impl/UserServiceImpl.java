@@ -9,21 +9,28 @@ import com.hope.xueling.common.domain.vo.UserVO;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.common.service.IUserService;
+import com.hope.xueling.common.util.AliOSSUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.ValidationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * 用户服务实现类
  * @author 谢光益
  * @since 2026/1/20
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
 
     private final UserMapper userMapper;
+    private final AliOSSUtils aliOSSUtils;
     private final String DEFAULT_AVATAR_URL = "https://xueling-platform.oss-cn-hangzhou.aliyuncs.com/d915734b-a240-4350-acb6-30b6e2d3d981.jpg";
 
     @Override
@@ -151,6 +158,21 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public String uploadAvatar(Long userId, MultipartFile avatar) {
+        try {
+            String avatarUrl = aliOSSUtils.upload(avatar);
+            //更新用户头像URL
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", userId).set("avatar_url", avatarUrl);
+            userMapper.update(null, updateWrapper);
+            return avatarUrl;
+        } catch (IOException e) {
+            log.error("用户{}头像上传失败",userId,e);
+            throw new BusinessException("头像上传失败,请稍后重试");
+        }
+    }
+
+    @Override
     public void cancelUserAccount(Long userId, String verificationCode) {
         //检查用户ID是否为空
         if (userId == null) {
@@ -162,4 +184,6 @@ public class UserServiceImpl implements IUserService {
 
         //TODO 注销用户账号
     }
+
+
 }

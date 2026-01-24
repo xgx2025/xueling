@@ -3,6 +3,7 @@ package com.hope.xueling.common.service;
 import com.hope.xueling.common.domain.dto.UserDTO;
 import com.hope.xueling.common.domain.entity.User;
 import com.hope.xueling.common.domain.vo.UserVO;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户服务接口
@@ -57,9 +58,18 @@ public interface IUserService {
     String getPasswordByPhone(String phone);
 
     /**
+     * 上传用户头像
+     * @param userId 用户ID
+     * @param avatar 头像文件
+     * @return String 头像URL
+     */
+    String uploadAvatar(Long userId, MultipartFile avatar);
+
+    /**
      * 注销用户(发起注销 → 手机验证码 → 执行注销)
      * @param userId 用户ID
      * @param verificationCode 验证码
      */
     void cancelUserAccount(Long userId, String verificationCode);
+
 }
