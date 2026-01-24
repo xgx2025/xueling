@@ -56,7 +56,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/profile/avatar")
+    @PutMapping("/avatar")
     public Result<String> updateAvatar(@RequestParam("file")MultipartFile avatar){
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
