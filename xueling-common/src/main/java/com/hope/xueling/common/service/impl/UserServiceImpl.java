@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements IUserService {
 
     private final UserMapper userMapper;
+    private final String DEFAULT_AVATAR_URL = "https://xueling-platform.oss-cn-hangzhou.aliyuncs.com/d915734b-a240-4350-acb6-30b6e2d3d981.jpg";
 
     @Override
     public void insertUser(User user) {
@@ -33,6 +34,7 @@ public class UserServiceImpl implements IUserService {
         long count = userMapper.selectCount(null);
         long index = count + 1;
         user.setUsername("学灵"+index);
+        user.setAvatarUrl(DEFAULT_AVATAR_URL);
         userMapper.insert(user);
     }
 
