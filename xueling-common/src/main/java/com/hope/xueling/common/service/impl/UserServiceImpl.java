@@ -87,6 +87,24 @@ public class UserServiceImpl implements IUserService {
         BeanUtils.copyProperties(userDTO, user);
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", userDTO.getId());
+        if (user.getBio() != null) {
+            if (user.getBio().length() > 500) {
+                throw new ValidationException("个人简介不能超过500字");
+            }
+            updateWrapper.set("bio", user.getBio());
+        }
+        if (user.getBirthday() != null) {
+            updateWrapper.set("birthday", user.getBirthday());
+        }
+        if (user.getGender() != null) {
+            updateWrapper.set("gender", user.getGender());
+        }
+        if (user.getUsername() != null) {
+            if (user.getUsername().length() > 20) {
+                throw new ValidationException("用户名不能超过20字");
+            }
+            updateWrapper.set("username", user.getUsername());
+        }
         userMapper.update(user, updateWrapper);
     }
 

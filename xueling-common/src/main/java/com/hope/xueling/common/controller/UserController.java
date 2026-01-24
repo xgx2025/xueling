@@ -49,7 +49,9 @@ public class UserController {
      */
     @PostMapping("/profile")
     public Result<String> profile(@RequestBody UserDTO userDTO) {
-        log.info("正在编辑用户信息: {}", userDTO);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        userDTO.setId(userId);
         userService.updateUserById(userDTO);
         log.info("用户信息更新成功");
         return Result.success("用户信息更新成功");
