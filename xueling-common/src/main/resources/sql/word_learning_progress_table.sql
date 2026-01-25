@@ -3,7 +3,7 @@ CREATE TABLE `word_learning_progress` (
                                           `user_id` bigint unsigned NOT NULL COMMENT '用户ID',
                                           `word_id` bigint unsigned NOT NULL COMMENT '单词ID',
                                           `review_count` int unsigned DEFAULT '0' COMMENT '复习次数',
-                                          `proficiency` int unsigned DEFAULT '0' COMMENT '熟练度数值'
+                                          `proficiency` int unsigned DEFAULT '0' COMMENT '熟练度数值',
                                           `familiarity_tag` tinyint unsigned DEFAULT '0' COMMENT '熟悉度标签(0=未学习,1=生疏,2=一般,3=熟悉,4=精通)',
                                           `insert_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
                                           `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
