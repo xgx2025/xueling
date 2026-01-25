@@ -5,7 +5,7 @@ CREATE TABLE `user` (
                         `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号',
                         `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
                         `avatar_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像URL',
-                        `gender` tinyint DEFAULT NULL DEFAULT '0' COMMENT '性别: 0-未知, 1-男, 2-女',
+                        `gender` tinyint DEFAULT NULL COMMENT '性别: 0-未知, 1-男, 2-女',
                         `birthday` date DEFAULT NULL COMMENT '生日',
                         `bio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '个人简介',
                         `vip_level` tinyint unsigned DEFAULT '0' COMMENT 'VIP等级: 0-普通，2-VIP会员，3-SVIP会员',
