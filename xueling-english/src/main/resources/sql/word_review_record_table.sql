@@ -5,7 +5,7 @@ CREATE TABLE `word_review_record` (
                                       `review_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '复习时间',
                                       `review_result` tinyint(1) DEFAULT NULL COMMENT '复习结果(0=错误,1=正确)',
                                       `time_spent` int unsigned DEFAULT '0' COMMENT '花费时间(秒)',
-                                      `insert_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
+                                      `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                       PRIMARY KEY (`id`),
                                       KEY `idx_user_id` (`user_id`),
                                       KEY `idx_word_id` (`word_id`),

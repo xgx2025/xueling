@@ -3,7 +3,7 @@ CREATE TABLE `word_book_dictionary_relation` (
                                                  `word_book_id` bigint unsigned NOT NULL COMMENT '单词本ID',
                                                  `word_id` bigint unsigned NOT NULL COMMENT '单词ID',
                                                  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0=无效,1=有效)',
-                                                 `insert_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
+                                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                                  PRIMARY KEY (`id`),
                                                  UNIQUE KEY `uk_book_word` (`word_book_id`, `word_id`),
                                                  KEY `idx_word_book_id` (`word_book_id`),

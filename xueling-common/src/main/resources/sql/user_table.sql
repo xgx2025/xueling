@@ -15,9 +15,9 @@ CREATE TABLE `user` (
                         `last_login_at` datetime DEFAULT NULL COMMENT '最后登录时间',
                         `last_login_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '最后登录IP',
                         `last_active_at` datetime DEFAULT NULL COMMENT '最后活跃时间',
-                        `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                        `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                        `deleted_at` datetime DEFAULT NULL COMMENT '软删除时间',
+                        `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                        `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                        `delete_time` datetime DEFAULT NULL COMMENT '软删除时间',
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `username` (`username`),
                         UNIQUE KEY `email` (`email`),
@@ -26,5 +26,5 @@ CREATE TABLE `user` (
                         KEY `idx_phone` (`phone`),
                         KEY `idx_username` (`username`),
                         KEY `idx_account_status` (`account_status`),
-                        KEY `idx_created_at` (`created_at`)
+                        KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户主表';
