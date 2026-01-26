@@ -1,13 +1,14 @@
-package com.hope.xueling.english.domain.dto;
+package com.hope.xueling.english.domain.vo;
 
 import lombok.Data;
+
 /**
- * 单词字典数据传输对象
+ * 单词字典视图对象
  * @author 谢光湘
  * @since 2026/1/26
  */
 @Data
-public class WordDictionaryDTO {
+public class WordDictionaryVO {
     /**
      * 单词
      */

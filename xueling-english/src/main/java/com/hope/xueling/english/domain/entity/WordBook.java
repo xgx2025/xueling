@@ -15,6 +15,10 @@ public class WordBook {
      * 单词本ID
      */
     private Long id;
+     /**
+     * 单词本创建人ID
+     */
+    private Long userId;
 
     /**
      * 单词本名称

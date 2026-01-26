@@ -3,6 +3,7 @@ package com.hope.xueling.english.controller;
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.util.ThreadLocalUtils;
 import com.hope.xueling.english.domain.entity.WordDictionary;
+import com.hope.xueling.english.domain.vo.WordBookVo;
 import com.hope.xueling.english.service.IWordBookService;
 import com.hope.xueling.english.service.IWordDictionaryService;
 import io.jsonwebtoken.Claims;
@@ -38,8 +39,20 @@ public class WordBookController {
     }
 
     /**
+     * 获取用户所有单词本
+     * @return 用户所有单词本列表
+     */
+    @GetMapping
+    public Result<List<WordBookVo>> getWordBooks() {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        List<WordBookVo> wordBookVoList = wordBookService.getWordBooks(userId);
+        return Result.success(wordBookVoList);
+    }
+    /**
      * 匹配用户输入的单词是否参在于系统的单词库中
      * @param words 用户输入的单词列表
+     * @return 匹配到的单词列表
      */
     @PostMapping("/match")
     public Result<List<WordDictionary>> matchWords(@RequestParam("words") String words) {
@@ -52,7 +65,7 @@ public class WordBookController {
      * @param wordBookId 单词本ID
      * @param wordIds 单词列表
      */
-    @PostMapping("/newWords")
+    @PostMapping("/newWord")
     public Result<String> addWordToWordBook(@RequestParam("wordBookId") Long wordBookId,
                                             @RequestParam("words") List<String> wordIds) {
         Claims claims = ThreadLocalUtils.get();
