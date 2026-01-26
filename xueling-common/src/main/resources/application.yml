@@ -103,3 +103,10 @@ email:
   port: 465
   username: ${email_username}
   password: ${email_key}  # SMTP授权码
+
+# 大模型key配置
+llm:
+  deepseek:
+    api:
+      # DeepSeek API Key
+      key: ${deepseek_key}
