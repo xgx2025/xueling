@@ -1,7 +1,6 @@
 package com.hope.xueling.english.domain.vo;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,30 +10,25 @@ import java.time.LocalDateTime;
  * @since 2026/1/26
  */
 @Data
-@NoArgsConstructor
-public class WordDictionaryVO {
+public class WordVO {
     /**
-     * 主键ID
+     * 单词ID
      */
     private String id;
-
     /**
      * 单词
      */
     private String word;
-
     /**
-     * 释义
+     * 单词含义
      */
     private String meaning;
-
     /**
-     * 音标
+     * 单词音标
      */
     private String phonetic;
-
-    /**
-     * 创建时间
-     */
+     /**
+      * 创建时间
+      */
     private LocalDateTime createTime;
 }

@@ -28,7 +28,7 @@ public class TranslationServiceImpl implements ITranslationService {
                 # 输出示例
                 {"word":"example","meaning":"n. 例子；adj. 示范性的；vt. 作为例子","phonetic":"ɪɡˈzɑːmpəl"}
                 # 注意
-                对于不存在的单词，返回空对象 {"word":"","meaning":"","phonetic":""}。
+                对于不存在的单词或其他问题，返回空对象 {"word":"","meaning":"","phonetic":""}。
                 """;
         String userPrompt = String.format("请翻译单词 %s ", word);
         return doubaoChatClient.prompt()

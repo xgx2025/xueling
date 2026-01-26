@@ -4,10 +4,16 @@ import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hope.xueling.common.exception.BusinessException;
 import com.hope.xueling.common.exception.ValidationException;
+import com.hope.xueling.english.domain.dto.AddWordsToWordBookDTO;
+import com.hope.xueling.english.domain.dto.CreateWordBookDTO;
+import com.hope.xueling.english.domain.dto.RemoveWordsFromWordBookDTO;
 import com.hope.xueling.english.domain.entity.WordBook;
 import com.hope.xueling.english.domain.entity.WordBookDictionaryRelation;
 import com.hope.xueling.english.domain.entity.WordDictionary;
-import com.hope.xueling.english.domain.vo.WordBookVo;
+import com.hope.xueling.english.domain.vo.WordBookDetailVO;
+import com.hope.xueling.english.domain.vo.WordBookVO;
+import com.hope.xueling.english.domain.vo.WordDictionaryVO;
+import com.hope.xueling.english.domain.vo.WordVO;
 import com.hope.xueling.english.mapper.WordBookDictionaryRelationMapper;
 import com.hope.xueling.english.mapper.WordBookMapper;
 import com.hope.xueling.english.mapper.WordDictionaryMapper;
@@ -17,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * 单词本服务实现类
@@ -35,20 +38,45 @@ public class WordBookServiceImpl implements IWordBookService {
     private final WordDictionaryMapper wordDictionaryMapper;
     private final WordBookDictionaryRelationMapper wordBookDictionaryRelationMapper;
 
+    // 定义允许的颜色列表（应与前端一致，或者放在配置中心/数据库）
+    private static final Set<String> ALLOWED_COLORS = Set.of(
+            "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
+            "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+            "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)",
+            "linear-gradient(120deg, #f6d365 0%, #fda085 100%)",
+            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "linear-gradient(120deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)"
+    );
+
+    // 定义允许的图标列表
+    private static final Set<String> ALLOWED_ICONS = Set.of(
+            "📘", "📖", "📚", "📕", "📗", "📙", "🎓", "🗣️", "📝", "🧠", "🌟", "🔥"
+    );
+
 
 
     @Override
-    public void createWordBook(String name, Long userId) {
+    public void createWordBook(CreateWordBookDTO createWordBookDTO, Long userId) {
+        // 1. 白名单校验
+        if (!ALLOWED_COLORS.contains(createWordBookDTO.getColor())) {
+            throw new ValidationException("不支持的封面颜色风格");
+        }
+
+        if (!ALLOWED_ICONS.contains(createWordBookDTO.getIcon())) {
+            throw new ValidationException("不支持的图标类型");
+        }
         WordBook wordBook = new WordBook();
         wordBook.setUserId(userId);
         wordBook.setId(IdUtil.getSnowflakeNextId());
-        wordBook.setName(name);
+        wordBook.setName(createWordBookDTO.getName());
+        wordBook.setColor(createWordBookDTO.getColor());
+        wordBook.setIcon(createWordBookDTO.getIcon());
         wordBook.setWordCount(0);
         wordBookMapper.insert(wordBook);
     }
 
     @Override
-    public List<WordBookVo> getWordBooks(Long userId) {
+    public List<WordBookVO> getWordBooks(Long userId) {
         // 查询用户所有单词本
         QueryWrapper<WordBook> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId).eq("is_deleted", 0);
@@ -59,19 +87,66 @@ public class WordBookServiceImpl implements IWordBookService {
         // 转换为VO
         //TODO: 计算掌握度(暂时写死)
         return wordBooks.stream().map(wordBook -> {
-            WordBookVo wordBookVo = new WordBookVo();
-            wordBookVo.setId(wordBook.getId());
+            WordBookVO wordBookVo = new WordBookVO();
+            wordBookVo.setId(String.valueOf(wordBook.getId()));
             wordBookVo.setName(wordBook.getName());
             wordBookVo.setWordCount(wordBook.getWordCount());
             //TODO: 计算掌握度(暂时写死)
-            wordBookVo.setMasteryDegree(45);
+            wordBookVo.setMastery(45);
             return wordBookVo;
         }).toList();
     }
 
+    @Override
+    public WordBookDetailVO getWordBookDetail(Long wordBookId, Long userId) {
+        // 检查单词本是否存在
+        WordBook wordBook = wordBookMapper.selectById(wordBookId);
+        if (wordBook == null) {
+            throw new BusinessException("{}单词本不存在", wordBookId);
+        }
+        // 检查用户是否对单词本有读权限
+        if (!wordBook.getUserId().equals(userId)) {
+            throw new BusinessException("用户{}对单词本{}没有读权限", userId, wordBookId);
+        }
+        // 构建VO
+        WordBookDetailVO wordBookDetailVO = new WordBookDetailVO();
+        wordBookDetailVO.setId(String.valueOf(wordBook.getId()));
+        wordBookDetailVO.setName(wordBook.getName());
+        wordBookDetailVO.setWordCount(wordBook.getWordCount());
+        //TODO: 计算掌握度(暂时写死)
+        wordBookDetailVO.setMastery(45);
+        // 查询单词列表
+        QueryWrapper<WordBookDictionaryRelation> relationQueryWrapper = new QueryWrapper<>();
+        relationQueryWrapper.eq("word_book_id", wordBookId);
+        List<WordBookDictionaryRelation> relations = wordBookDictionaryRelationMapper.selectList(relationQueryWrapper);
+        log.info("单词本{}包含单词数量：{}", wordBookId, relations.size());
+        if (relations.isEmpty()) {
+            wordBookDetailVO.setWordList(Collections.emptyList());
+        } else {
+            // 批量查询单词详情
+            QueryWrapper<WordDictionary> wordQueryWrapper = new QueryWrapper<>();
+            wordQueryWrapper.in("id", relations.stream().map(WordBookDictionaryRelation::getWordId).toList());
+            wordQueryWrapper.orderByDesc("create_time");
+            List<WordDictionary> wordDictionaries = wordDictionaryMapper.selectList(wordQueryWrapper);
+            //转换为VO
+            wordBookDetailVO.setWordList(wordDictionaries.stream().map(wordDictionary -> {
+                WordVO wordVO = new WordVO();
+                wordVO.setId(String.valueOf(wordDictionary.getId()));
+                wordVO.setWord(wordDictionary.getWord());
+                wordVO.setMeaning(wordDictionary.getMeaning());
+                wordVO.setPhonetic(wordDictionary.getPhonetic());
+                wordVO.setMeaning(wordDictionary.getMeaning());
+                wordVO.setCreateTime(wordDictionary.getCreateTime());
+                return wordVO;
+            }).toList());
+        }
+        log.info("单词本{}包含单词列表：{}", wordBookId, wordBookDetailVO.getWordList());
+        return wordBookDetailVO;
+    }
+
 
     @Override
-    public List<WordDictionary> matchWords( String words) {
+    public List<WordDictionaryVO> matchWords(String words) {
         if (words == null || words.trim().isEmpty()) {
             return Collections.emptyList();
         }
@@ -92,12 +167,23 @@ public class WordBookServiceImpl implements IWordBookService {
             }
         });
 
-        return wordDictionaryMapper.selectList(wrapper);
+        List<WordDictionary> wordDictionaries = wordDictionaryMapper.selectList(wrapper);
+        return wordDictionaries.stream().map(wordDictionary -> {
+            WordDictionaryVO wordDictionaryVO = new WordDictionaryVO();
+            wordDictionaryVO.setId(String.valueOf(wordDictionary.getId()));
+            wordDictionaryVO.setWord(wordDictionary.getWord());
+            wordDictionaryVO.setMeaning(wordDictionary.getMeaning());
+            wordDictionaryVO.setPhonetic(wordDictionary.getPhonetic());
+            wordDictionaryVO.setCreateTime(wordDictionary.getCreateTime());
+            return wordDictionaryVO;
+        }).toList();
     }
 
     @Transactional
     @Override
-    public void addWordsToWordBook(Long wordBookId, Long userId, List<Long> wordIds) {
+    public void addWordsToWordBook(AddWordsToWordBookDTO addWordsToWordBookDTO, Long userId) {
+        Long wordBookId = Long.parseLong(addWordsToWordBookDTO.getWordBookId());
+        List<Long> wordIds = addWordsToWordBookDTO.getWordIds().stream().map(Long::parseLong).toList();
         //单词数数量不超过20个
         if (wordIds.size() > 20) {
             log.warn("一次添加单词数量超过限制，用户ID：{}，单词本ID：{}，单词数量：{}", userId, wordBookId, wordIds.size());
@@ -135,5 +221,32 @@ public class WordBookServiceImpl implements IWordBookService {
         wordBook.setWordCount(wordBook.getWordCount() + needAddRelations.size());
         wordBookMapper.updateById(wordBook);
     }
+
+    @Override
+    public void deleteWordsFromWordBook(RemoveWordsFromWordBookDTO removeWordsFromWordBookDTO, Long userId) {
+        Long wordBookId = Long.parseLong(removeWordsFromWordBookDTO.getWordBookId());
+        List<Long> wordIds = removeWordsFromWordBookDTO.getWordIds().stream().map(Long::parseLong).toList();
+        // 检查单词本是否存在
+        WordBook wordBook = wordBookMapper.selectById(wordBookId);
+        if (wordBook == null) {
+            throw new BusinessException("单词本不存在");
+        }
+        // 检查用户是否对单词本有写权限
+        if (!wordBook.getUserId().equals(userId)) {
+            throw new BusinessException("用户对单词本没有写权限");
+        }
+        // 批量删除单词本中的单词
+        QueryWrapper<WordBookDictionaryRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("word_book_id", wordBookId).in("word_id", wordIds);
+        wordBookDictionaryRelationMapper.delete(queryWrapper);
+        // 更新单词本单词数量
+        wordBook.setWordCount(wordBook.getWordCount() - wordIds.size());
+        wordBookMapper.updateById(wordBook);
+    }
+
+    //TODO
+    /**
+     * 计算单词本掌握度
+     */
 
 }

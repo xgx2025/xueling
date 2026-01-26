@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 /**
  * 单词字典服务实现类
  * @author 谢光湘
- * @since 2025/1/25
+ * @since 2026/1/25
  */
 @Slf4j
 @RequiredArgsConstructor

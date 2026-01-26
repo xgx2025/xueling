@@ -24,6 +24,14 @@ public class WordBook {
      * 单词本名称
      */
     private String name;
+     /**
+     * 单词本颜色
+     */
+    private String color;
+    /**
+     * 单词本图标
+     */
+    private String icon;
 
     /**
      * 单词数量
