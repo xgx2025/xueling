@@ -10,7 +10,7 @@ import com.hope.xueling.english.domain.entity.WordDictionary;
  */
 public interface IWordDictionaryService {
     /**
-     * 查询单词字典
+     * 查询单词
      * @param word 英语单词
      * @return 单词字典
      */

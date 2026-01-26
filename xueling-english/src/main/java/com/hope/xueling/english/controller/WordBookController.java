@@ -2,9 +2,13 @@ package com.hope.xueling.english.controller;
 
 import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.util.ThreadLocalUtils;
-import com.hope.xueling.english.domain.entity.WordDictionary;
+import com.hope.xueling.english.domain.dto.AddWordsToWordBookDTO;
+import com.hope.xueling.english.domain.dto.CreateWordBookDTO;
+import com.hope.xueling.english.domain.dto.RemoveWordsFromWordBookDTO;
+import com.hope.xueling.english.domain.vo.WordBookDetailVO;
+import com.hope.xueling.english.domain.vo.WordBookVO;
+import com.hope.xueling.english.domain.vo.WordDictionaryVO;
 import com.hope.xueling.english.service.IWordBookService;
-import com.hope.xueling.english.service.IWordDictionaryService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,53 +27,78 @@ import java.util.List;
 @RequestMapping("/wordbooks")
 public class WordBookController {
     private final IWordBookService wordBookService;
-    private final IWordDictionaryService wordDictionaryService;
 
     /**
      * 创建一个单词本
-     * @param name 单词本名称
+     * @param createWordBookDTO 单词本DTO
      */
     @PostMapping
-    public Result<String> createWordBook(@RequestParam("name") String name) {
+    public Result<String> createWordBook(@RequestBody CreateWordBookDTO createWordBookDTO) {
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
-        wordBookService.createWordBook(name,userId);
+        wordBookService.createWordBook(createWordBookDTO,userId);
         return Result.success("单词本创建成功");
+    }
+
+    /**
+     * 获取用户所有单词本
+     * @return 用户所有单词本列表
+     */
+    @GetMapping("/all")
+    public Result<List<WordBookVO>> getWordBooks() {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        List<WordBookVO> wordBookVoList = wordBookService.getWordBooks(userId);
+        return Result.success(wordBookVoList);
+    }
+
+    /**
+     * 获取单词本详情
+     * @param wordBookId 单词本ID
+     * @return 单词本详情
+     */
+    @GetMapping("/{wordBookId}")
+    public Result<WordBookDetailVO> getWordBookDetail(@PathVariable("wordBookId") Long wordBookId) {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        WordBookDetailVO wordBookVo = wordBookService.getWordBookDetail(wordBookId, userId);
+        return Result.success(wordBookVo);
     }
 
     /**
      * 匹配用户输入的单词是否参在于系统的单词库中
      * @param words 用户输入的单词列表
+     * @return 匹配到的单词列表
      */
     @PostMapping("/match")
-    public Result<List<WordDictionary>> matchWords(@RequestParam("words") String words) {
-        List<WordDictionary> matchedWords = wordBookService.matchWords(words);
+    public Result<List<WordDictionaryVO>> matchWords(@RequestParam("words") String words) {
+        List<WordDictionaryVO> matchedWords = wordBookService.matchWords(words);
         return Result.success(matchedWords);
     }
 
     /**
      * 将用户输入的单词添加到单词本
-     * @param wordBookId 单词本ID
-     * @param wordIds 单词列表
+     * @param addWordsToWordBookDTO 添加单词到单词本DTO
      */
-    @PostMapping("/newWords")
-    public Result<String> addWordToWordBook(@RequestParam("wordBookId") Long wordBookId,
-                                            @RequestParam("words") List<String> wordIds) {
+    @PostMapping("/word")
+    public Result<String> addWordToWordBook(@RequestBody AddWordsToWordBookDTO addWordsToWordBookDTO) {
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
-        List<Long> wordIdList = wordIds.stream().map(Long::parseLong).toList();
-        wordBookService.addWordsToWordBook(wordBookId,userId,wordIdList);
+        wordBookService.addWordsToWordBook(addWordsToWordBookDTO,userId);
         return Result.success("单词添加成功");
     }
-
     /**
-     * 翻译单词
-     * @param word 单词
+     * 从单词本中删除单词
+     * @param removeWordsFromWordBookDTO 从单词本中删除单词DTO
      */
-    @GetMapping
-    public Result<WordDictionary> translateWord(@RequestParam ("word") String word) {
-        WordDictionary wordDictionary = wordDictionaryService.queryWordDictionary(word);
-        log.info("查询结果: {}", wordDictionary);
-        return Result.success(wordDictionary);
+    @DeleteMapping("/word")
+    public Result<String> deleteWordFromWordBook(@RequestBody RemoveWordsFromWordBookDTO removeWordsFromWordBookDTO) {
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        wordBookService.deleteWordsFromWordBook(removeWordsFromWordBookDTO, userId);
+        return Result.success("单词删除成功");
     }
+
+
+
 }

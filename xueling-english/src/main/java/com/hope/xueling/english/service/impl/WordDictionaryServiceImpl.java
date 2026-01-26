@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 /**
  * 单词字典服务实现类
  * @author 谢光湘
- * @since 2025/1/25
+ * @since 2026/1/25
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
 
     @Override
     public WordDictionary queryWordDictionary(String word) {
+        word = word.trim();
         QueryWrapper<WordDictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("word", word);
         WordDictionary entity = wordDictionaryMapper.selectOne(queryWrapper);
@@ -46,10 +47,7 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
         return result;
     }
 
-    /**
-     * 保存单词字典
-     * @param wordDictionary 单词字典
-     */
+    @Override
     public void saveWordDictionary(Long id,WordDictionaryDTO wordDictionary) {
         // 转换为实体类
         WordDictionary entity = new WordDictionary();

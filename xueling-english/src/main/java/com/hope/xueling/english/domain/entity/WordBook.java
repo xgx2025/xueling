@@ -15,11 +15,23 @@ public class WordBook {
      * 单词本ID
      */
     private Long id;
+     /**
+     * 单词本创建人ID
+     */
+    private Long userId;
 
     /**
      * 单词本名称
      */
     private String name;
+     /**
+     * 单词本颜色
+     */
+    private String color;
+    /**
+     * 单词本图标
+     */
+    private String icon;
 
     /**
      * 单词数量

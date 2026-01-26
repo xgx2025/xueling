@@ -106,11 +106,12 @@ public class AuthController {
      * @param response HttpServletResponse对象
      * @return 刷新成功后返回新的访问令牌（data中）和刷新令牌（Set-Cookie中）
      */
-    @GetMapping("/refreshToken")
+    @PostMapping("/refreshToken")
     public ResponseEntity<Result<String>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         //从请求的HttpOnlyCookie中获取刷新令牌
         Cookie refreshCookie = WebUtils.getCookie(request, "refreshToken");
         if (refreshCookie == null){
+            log.warn("刷新令牌为空");
             return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED,"登录已过期，请重新登录"));
         }
         String refreshToken = refreshCookie.getValue();
@@ -123,6 +124,7 @@ public class AuthController {
             String savedRefreshToken = stringRedisTemplate.opsForValue().get(redisKey);
 
             if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+                log.warn("刷新令牌无效或已过期，userId: {}", userId);
                 return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED, "登录状态失效，请重新登录"));
             }
 

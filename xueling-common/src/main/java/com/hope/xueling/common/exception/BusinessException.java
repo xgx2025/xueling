@@ -10,4 +10,7 @@ public class BusinessException extends BaseException {
     public BusinessException(String message) {
         super(message);
     }
+    public BusinessException(String message, Object... args) {
+        super(String.format(message, args));
+    }
 }
