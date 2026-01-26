@@ -45,6 +45,7 @@ CREATE TABLE `chapter` (
                            `title` varchar(255) NOT NULL COMMENT '章节标题',
                            `content` varchar(5000) NOT NULL COMMENT '章节内容',
                            `chapter_number` int unsigned NOT NULL COMMENT '章节序号',
+                           `paragraph_count` int unsigned NOT NULL DEFAULT 0 COMMENT '段落数',
                            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                            PRIMARY KEY (`id`),
@@ -52,7 +53,6 @@ CREATE TABLE `chapter` (
                            KEY `idx_book_id` (`book_id`),
                            CONSTRAINT `fk_chapter_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`material_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='章节表';
-
 -- 文章段落翻译表
 CREATE TABLE `article_translation` (
                                        `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '翻译ID',
