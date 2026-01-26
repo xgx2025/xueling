@@ -16,7 +16,7 @@ CREATE TABLE `material` (
                             KEY `idx_created_at` (`created_at`),
                             CONSTRAINT `fk_material_category`
                                 FOREIGN KEY (`category_id`)
-                                    REFERENCES `category` (`id`)
+                                    REFERENCES `material_category` (`id`)
                                     ON DELETE RESTRICT
                                     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='阅读材料表';
@@ -136,7 +136,7 @@ CREATE TABLE `material_favorite` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章收藏表';
 
 -- 阅读材料分类表
-CREATE TABLE `category` (
+CREATE TABLE `material_category` (
                             `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '分类ID',
                             `name` varchar(100) NOT NULL COMMENT '分类名称',
                             `sort_order` int unsigned NOT NULL DEFAULT 0 COMMENT '排序序号',
