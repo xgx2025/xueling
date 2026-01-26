@@ -19,7 +19,7 @@ CREATE TABLE `material` (
 -- 文章表（继承自材料表）
 CREATE TABLE `article` (
                            `material_id` bigint unsigned NOT NULL COMMENT '材料ID',
-                           `content` text NOT NULL COMMENT '内容',
+                           `content` varchar(5000) NOT NULL COMMENT '内容',
                            `paragraph_count` int unsigned NOT NULL DEFAULT 0 COMMENT '段落数',
                            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -30,6 +30,7 @@ CREATE TABLE `article` (
 -- 书籍表（继承自材料表）
 CREATE TABLE `book` (
                         `material_id` bigint unsigned NOT NULL COMMENT '材料ID',
+                        `introduction` varchar(800) DEFAULT NULL COMMENT '书籍简介',
                         `chapter_count` int unsigned NOT NULL DEFAULT 0 COMMENT '章节数',
                         `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -42,7 +43,7 @@ CREATE TABLE `chapter` (
                            `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '章节ID',
                            `book_id` bigint unsigned NOT NULL COMMENT '书籍ID（material_id）',
                            `title` varchar(255) NOT NULL COMMENT '章节标题',
-                           `content` text NOT NULL COMMENT '章节内容',
+                           `content` varchar(5000) NOT NULL COMMENT '章节内容',
                            `chapter_number` int unsigned NOT NULL COMMENT '章节序号',
                            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -57,7 +58,7 @@ CREATE TABLE `article_translation` (
                                        `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '翻译ID',
                                        `article_id` bigint unsigned NOT NULL COMMENT '文章ID（material_id）',
                                        `paragraph_index` int unsigned NOT NULL COMMENT '段落序号',
-                                       `chinese_meaning` text NOT NULL COMMENT '中文释义',
+                                       `chinese_meaning` varchar(5000) NOT NULL COMMENT '中文释义',
                                        `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                        `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                        PRIMARY KEY (`id`),
@@ -71,7 +72,7 @@ CREATE TABLE `book_translation` (
                                     `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '翻译ID',
                                     `chapter_id` bigint unsigned NOT NULL COMMENT '章节ID',
                                     `paragraph_index` int unsigned NOT NULL COMMENT '段落序号',
-                                    `chinese_meaning` text NOT NULL COMMENT '中文释义',
+                                    `chinese_meaning` varchar(5000) NOT NULL COMMENT '中文释义',
                                     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                     PRIMARY KEY (`id`),
