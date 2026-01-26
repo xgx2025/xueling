@@ -2,6 +2,14 @@ server:
   port: 9012
 
 spring:
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        base-url: "https://api.deepseek.com/"
+        options:
+          model: "deepseek-chat"
+
   datasource:
     # 1. 基本连接信息
     type: com.alibaba.druid.pool.DruidDataSource
@@ -103,3 +111,22 @@ email:
   port: 465
   username: ${email_username}
   password: ${email_key}  # SMTP授权码
+
+
+logging:
+  level:
+    root: INFO          # 全局默认INFO，不影响其他日志
+    org.springframework.ai: DEBUG  # Spring AI 核心包强制DEBUG（关键）
+
+
+
+llm:
+  doubao:
+    api-key: ${DOUBAO_API_KEY}
+    url: "https://ark.cn-beijing.volces.com/api"
+    model: "doubao-seed-1-6-flash-250828"
+
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY}
+    url: "https://api.deepseek.com/"
+    model: "deepseek-chat"

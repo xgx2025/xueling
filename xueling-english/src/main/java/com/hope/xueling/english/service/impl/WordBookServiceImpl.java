@@ -56,7 +56,7 @@ public class WordBookServiceImpl implements IWordBookService {
 
 
     @Override
-    public List<WordDictionary> matchWords(Long userId, String words) {
+    public List<WordDictionary> matchWords(String words) {
         if (words == null || words.trim().isEmpty()) {
             return Collections.emptyList();
         }
@@ -77,7 +77,7 @@ public class WordBookServiceImpl implements IWordBookService {
             }
         });
 
-        return wordDictionaryMapper.selectList(wrapper); // 仅执行 1 次 SQL！
+        return wordDictionaryMapper.selectList(wrapper);
     }
 
     @Override
@@ -85,17 +85,18 @@ public class WordBookServiceImpl implements IWordBookService {
         // 检查单词本是否存在
         WordBook wordBook = wordBookMapper.selectById(wordBookId);
         if (wordBook == null) {
+            log.warn("单词本{}不存在", wordBookId);
             throw new BusinessException("单词本不存在");
         }
         // 检查用户是否对单词本有写权限
         QueryWrapper<WordBookUserRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("word_book_id", wordBookId).eq("user_id", userId).eq("status", 1);
-        WordBookUserRelation wordBookUserRelation = wordBookUserRelationMapper.selectOne(queryWrapper
-        );
+        WordBookUserRelation wordBookUserRelation = wordBookUserRelationMapper.selectOne(queryWrapper);
         if (wordBookUserRelation == null) {
+            log.warn("用户{}对单词本{}没有写权限", userId, wordBookId);
             throw new BusinessException("用户对单词本没有写权限");
         }
-        // 找出还没有加入单词本的单词
+        // 找出还没有加入该单词本的单词
         List<Long> needAddWordIds = new ArrayList<>();
         wordIds.forEach(wordId -> {
             QueryWrapper<WordBookDictionaryRelation> queryWrapper2 = new QueryWrapper<>();

@@ -1,0 +1,6 @@
+# english\u6A21\u5757\u7684application.yml
+spring:
+  profiles:
+    include: common # \u5F15\u5165common\u6A21\u5757\u7684application-common.yml\u914D\u7F6E
+  main:
+    allow-bean-definition-overriding: true

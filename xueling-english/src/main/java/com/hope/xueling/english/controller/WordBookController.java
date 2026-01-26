@@ -4,6 +4,7 @@ import com.hope.xueling.common.domain.vo.Result;
 import com.hope.xueling.common.util.ThreadLocalUtils;
 import com.hope.xueling.english.domain.entity.WordDictionary;
 import com.hope.xueling.english.service.IWordBookService;
+import com.hope.xueling.english.service.IWordDictionaryService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+/**
+ * 单词本控制器
+ * @author 谢光湘
+ * @since 2026/1/26
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/wordbooks")
 public class WordBookController {
     private final IWordBookService wordBookService;
+    private final IWordDictionaryService wordDictionaryService;
 
     /**
      * 创建一个单词本
@@ -37,9 +43,7 @@ public class WordBookController {
      */
     @PostMapping("/match")
     public Result<List<WordDictionary>> matchWords(@RequestParam("words") String words) {
-        Claims claims = ThreadLocalUtils.get();
-        Long userId = claims.get("userId", Long.class);
-        List<WordDictionary> matchedWords = wordBookService.matchWords(userId, words);
+        List<WordDictionary> matchedWords = wordBookService.matchWords(words);
         return Result.success(matchedWords);
     }
 
@@ -59,10 +63,13 @@ public class WordBookController {
     }
 
     /**
-     * 处理浏览器直接访问的GET请求
+     * 翻译单词
+     * @param word 单词
      */
     @GetMapping
-    public Result<String> testGetWordBooks() {
-        return Result.success("这是单词本API的GET测试端点，浏览器直接访问成功！");
+    public Result<WordDictionary> translateWord(@RequestParam ("word") String word) {
+        WordDictionary wordDictionary = wordDictionaryService.queryWordDictionary(word);
+        log.info("查询结果: {}", wordDictionary);
+        return Result.success(wordDictionary);
     }
 }
