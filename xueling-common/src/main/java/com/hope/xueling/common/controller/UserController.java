@@ -25,9 +25,6 @@ public class UserController {
 
     private final UserServiceImpl userService;
 
-    //TODO 用户修改用户信息、获取用户信息、用户注销
-
-     //TODO 获取用户信息
     /**
      * 根据用户ID获取用户信息
      * @return Result<UserVO> 结果对象，包含用户信息
@@ -41,7 +38,6 @@ public class UserController {
         return Result.success(userInfo);
     }
 
-    //TODO 编辑用户信息
     /**
      * 编辑用户信息
      * @param userDTO 用户数据传输对象
@@ -67,7 +63,6 @@ public class UserController {
         return Result.success(url, "用户头像更新成功");
     }
 
-    //TODO 注销用户
     /**
      * 注销用户(发起注销 → 手机验证码 → 执行注销)
      * @param verificationCode 验证码
@@ -75,8 +70,8 @@ public class UserController {
      */
     @PostMapping("/cancel/")
     public Result<String> cancel(@RequestParam String verificationCode) {
-        //TODO 获取当前用户ID
-        Long userId = 1L;
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
         log.info("正在注销用户{}", userId);
         userService.cancelUserAccount(userId, verificationCode);
         log.info("用户{}注销成功", userId);

@@ -198,9 +198,11 @@ public class UserServiceImpl implements IUserService {
             throw new ValidationException("用户ID不能为空");
         }
 
-        //TODO 验证码校验
+        //TODO 手机验证码校验
 
         //TODO 注销用户账号
+        //逻辑删除用户
+        userMapper.updateAccountStatusById(userId);
     }
 
 
