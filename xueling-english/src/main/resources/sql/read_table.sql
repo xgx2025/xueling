@@ -3,7 +3,7 @@ CREATE TABLE `material` (
                             `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '材料ID',
                             `title` varchar(255) NOT NULL COMMENT '标题',
                             `type` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '类型（1：书籍，2：文章）',
-                            `category` varchar(100) NOT NULL COMMENT '分类',
+                            `category_id` bigint unsigned NOT NULL COMMENT '分类ID',
                             `tag` varchar(255) DEFAULT NULL COMMENT '标签（多个用逗号分隔）',
                             `is_free` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '是否免费（0：否，1：是）',
                             `author` varchar(100) NOT NULL COMMENT '作者',
@@ -11,9 +11,14 @@ CREATE TABLE `material` (
                             `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                             PRIMARY KEY (`id`),
                             KEY `idx_type` (`type`),
-                            KEY `idx_category` (`category`),
+                            KEY `idx_category_id` (`category_id`),
                             KEY `idx_is_free` (`is_free`),
-                            KEY `idx_created_at` (`created_at`)
+                            KEY `idx_created_at` (`created_at`),
+                            CONSTRAINT `fk_material_category`
+                                FOREIGN KEY (`category_id`)
+                                    REFERENCES `category` (`id`)
+                                    ON DELETE RESTRICT
+                                    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='阅读材料表';
 
 -- 文章表（继承自材料表）
@@ -129,3 +134,18 @@ CREATE TABLE `material_favorite` (
                             CONSTRAINT `fk_favorite_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`) ON DELETE CASCADE,
                             CONSTRAINT `fk_favorite_chapter` FOREIGN KEY (`chapter_id`) REFERENCES `chapter` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章收藏表';
+
+-- 阅读材料分类表
+CREATE TABLE `category` (
+                            `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+                            `name` varchar(100) NOT NULL COMMENT '分类名称',
+                            `sort_order` int unsigned NOT NULL DEFAULT 0 COMMENT '排序序号',
+                            `is_active` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '是否启用（0：禁用，1：启用）',
+                            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `uk_name` (`name`),
+                            KEY `idx_sort_order` (`sort_order`),
+                            KEY `idx_is_active` (`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='阅读材料分类表';
+
