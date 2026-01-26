@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -117,7 +118,8 @@ public class AuthController {
         String refreshToken = refreshCookie.getValue();
         try {
             Claims claims = JwtTokenUtils.getClaimsFromToken(refreshToken, JwtTokenUtils.REFRESH_TOKEN_SECRET);
-            String userId = String.valueOf(claims.get("userId"));
+            log.info("刷新令牌，userId: {}", claims.get("userId", Long.class));
+            Long userId = claims.get("userId", Long.class);
 
             // 校验 Redis 中的 refreshToken
             String redisKey = "refreshToken:" + userId;
@@ -128,7 +130,8 @@ public class AuthController {
                 return ResponseEntity.status(401).body(Result.fail(ResultCode.UNAUTHORIZED, "登录状态失效，请重新登录"));
             }
 
-            Map<String,Object> map = Map.of("userId",userId);
+            Map<String,Object> map = new HashMap<>();
+            map.put("userId",userId);
             String newAccessToken = JwtTokenUtils.generateAccessToken(map);
             String newRefreshToken = JwtTokenUtils.generateRefreshToken(map);
 

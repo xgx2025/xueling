@@ -19,7 +19,7 @@ public class JwtTokenUtils {
     /**
      * Access Token密钥和过期时间(30分钟)
      */
-    public static final long ACCESS_TOKEN_EXPIRE = 30 * 60 * 1000;
+    public static final long ACCESS_TOKEN_EXPIRE =  30 * 60 * 1000;
 
 
     public static final String REFRESH_TOKEN_SECRET = "xueling_refresh_secret";
@@ -32,7 +32,7 @@ public class JwtTokenUtils {
     /**
      * 生成Access Token
      */
-    public static String generateAccessToken(Map<String, Object> claims) {
+    public static String generateAccessToken(Map<String, Object> claims) throws IllegalArgumentException, ExpiredJwtException{
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
@@ -44,7 +44,7 @@ public class JwtTokenUtils {
     /**
      * 生成Refresh Token
      */
-    public static String generateRefreshToken(Map<String, Object> claims) {
+    public static String generateRefreshToken(Map<String, Object> claims) throws IllegalArgumentException, ExpiredJwtException{
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
