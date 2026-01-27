@@ -77,7 +77,7 @@ public class WordBookController {
     }
 
     /**
-     * 将用户输入的单词添加到单词本
+     * 将单词添加到单词本
      * @param addWordsToWordBookDTO 添加单词到单词本DTO
      */
     @PostMapping("/word")

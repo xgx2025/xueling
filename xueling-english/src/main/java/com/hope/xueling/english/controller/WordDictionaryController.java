@@ -20,6 +20,7 @@ public class WordDictionaryController {
     /**
      * 翻译单词
      * @param word 单词
+     * @return WordDictionary 翻译结果
      */
     @GetMapping
     public Result<WordDictionary> translateWord(@RequestParam("word") String word) {
