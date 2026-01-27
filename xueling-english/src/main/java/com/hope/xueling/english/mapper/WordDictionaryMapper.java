@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * 单词字典Mapper接口
  * @author 谢光湘
- * @since 2025/1/25
+ * @since 2026/1/25
  */
 @Mapper
 public interface WordDictionaryMapper extends BaseMapper<WordDictionary> {

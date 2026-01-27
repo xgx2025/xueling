@@ -119,7 +119,6 @@ public class WordBookServiceImpl implements IWordBookService {
         QueryWrapper<WordBookDictionaryRelation> relationQueryWrapper = new QueryWrapper<>();
         relationQueryWrapper.eq("word_book_id", wordBookId);
         List<WordBookDictionaryRelation> relations = wordBookDictionaryRelationMapper.selectList(relationQueryWrapper);
-        log.info("单词本{}包含单词数量：{}", wordBookId, relations.size());
         if (relations.isEmpty()) {
             wordBookDetailVO.setWordList(Collections.emptyList());
         } else {
@@ -140,7 +139,6 @@ public class WordBookServiceImpl implements IWordBookService {
                 return wordVO;
             }).toList());
         }
-        log.info("单词本{}包含单词列表：{}", wordBookId, wordBookDetailVO.getWordList());
         return wordBookDetailVO;
     }
 

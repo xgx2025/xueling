@@ -10,7 +10,6 @@ public class WordBookVO {
      * 单词本ID
      */
     private String id;
-
     /**
      * 单词本名称
      */
@@ -23,12 +22,10 @@ public class WordBookVO {
      * 单词本图标
      */
     private String icon;
-
     /**
      * 单词总数
      */
     private Integer wordCount;
-
     /**
      * 掌握度（0-100）
      */

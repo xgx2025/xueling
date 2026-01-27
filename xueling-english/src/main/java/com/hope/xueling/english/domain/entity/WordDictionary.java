@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /**
  * 单词字典实体类
  * @author 谢光湘
- * @since 2025/1/25
+ * @since 2026/1/25
  */
 @Data
 @NoArgsConstructor
