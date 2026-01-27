@@ -2,6 +2,7 @@ package com.hope.xueling.english.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hope.xueling.common.util.StrUtils;
 import com.hope.xueling.english.domain.dto.WordDictionaryDTO;
 import com.hope.xueling.english.domain.entity.WordDictionary;
 import com.hope.xueling.english.mapper.WordDictionaryMapper;
@@ -25,17 +26,29 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
 
     @Override
     public WordDictionary queryWordDictionary(String word) {
-        word = word.trim();
+        String keyword = word.trim();
+        log.info("查询单词: {}", keyword);
+        String english = StrUtils.extractEnglish(keyword);
+        String chinese = StrUtils.extractChinese(keyword);
         QueryWrapper<WordDictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("word", word);
+        //如果有英文则以英文为准
+        if (!english.isEmpty()) {
+            keyword = english;
+            //TODO：目前词库不足，只能完全匹配，后续可以改为模糊匹配
+            queryWrapper.eq("word", keyword);
+        } else if (!chinese.isEmpty()) {
+            keyword = chinese;
+            queryWrapper.like("meaning", keyword);
+        }
+
         WordDictionary entity = wordDictionaryMapper.selectOne(queryWrapper);
         if (entity != null) {
             return entity;
         }
         // 从翻译服务查询翻译
-        WordDictionaryDTO translation = translationService.translateWord(word);
+        WordDictionaryDTO translation = translationService.translateWord(keyword);
         if (translation == null || translation.getWord().trim().isEmpty() || translation.getMeaning().trim().isEmpty()) {
-            log.warn("翻译服务未返回翻译结果，单词：{}", word);
+            log.warn("翻译服务未返回翻译结果，单词：{}", keyword);
             return null;
         }
         // 保存到数据库
