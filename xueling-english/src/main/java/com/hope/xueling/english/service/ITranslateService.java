@@ -1,12 +1,7 @@
 package com.hope.xueling.english.service;
 
-
-import com.hope.xueling.common.ai.SmartTranslation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 /**
- * 翻译服务
+ * 翻译服务接口
  * @author 谢光益
  * @since 2026/1/26
  */
