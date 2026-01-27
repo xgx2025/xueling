@@ -17,7 +17,6 @@ public class WordDictionaryVO {
      * 主键ID
      */
     private String id;
-
     /**
      * 单词
      */
@@ -32,7 +31,10 @@ public class WordDictionaryVO {
      * 音标
      */
     private String phonetic;
-
+     /**
+     * 是否在单词本中
+     */
+    private Boolean inWordBook;
     /**
      * 创建时间
      */

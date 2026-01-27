@@ -1,7 +1,7 @@
 package com.hope.xueling.english.service;
 
 import com.hope.xueling.english.domain.dto.WordDictionaryDTO;
-import com.hope.xueling.english.domain.entity.WordDictionary;
+import com.hope.xueling.english.domain.vo.WordDictionaryVO;
 
 /**
  * 单词字典服务接口
@@ -14,7 +14,7 @@ public interface IWordDictionaryService {
      * @param word 英语单词
      * @return 单词字典
      */
-    WordDictionary queryWordDictionary(String word);
+    WordDictionaryVO queryWordDictionary(String word, Long userId);
     /**
      * 保存单词字典
      * @param wordDictionary 单词字典
