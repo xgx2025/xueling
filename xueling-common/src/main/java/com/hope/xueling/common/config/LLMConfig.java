@@ -1,5 +1,8 @@
 package com.hope.xueling.common.config;
 
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -25,14 +28,17 @@ public class LLMConfig {
     @Value("${llm.doubao.url}")
     private String doubaoUrl;
     /**
-     * DeepSeek模型的相关配置
+     * DeepSeekChat模型的相关配置
      */
     @Value("${llm.deepseek.api-key}")
     private String deepSeekApiKey;
     @Value("${llm.deepseek.url}")
     private String deepSeekUrl;
-    @Value("${llm.deepseek.model}")
-    private String deepSeekModel;
+    @Value("${llm.deepseek.chat-model}")
+    private String deepSeekChatModel;
+    @Value("${llm.deepseek.reasoner-model}")
+    private String deepSeekReasonerModel;
+
 
 
     /**
@@ -69,8 +75,73 @@ public class LLMConfig {
         return OpenAiChatModel.builder()
                 .openAiApi(openAiApi)
                 .defaultOptions(OpenAiChatOptions.builder()
-                        .model(deepSeekModel)
+                        .model(deepSeekChatModel)
                         .build())
+                .build();
+    }
+
+
+    //langchain4j
+
+    /**
+     * 配置deepseek-chat模型
+     * @return ChatLanguageModel
+     */
+    @Bean("deepseekChatModel")
+    public ChatLanguageModel DeepSeekChatModel() {
+        return dev.langchain4j.model.openai.OpenAiChatModel.builder()
+                .baseUrl(deepSeekUrl)
+                .modelName(deepSeekChatModel)
+                .apiKey(deepSeekApiKey)
+                .maxTokens(1024)
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+    }
+
+    /**
+     * 配置deepseek-chat流式输出模型
+     * @return ChatLanguageModel
+     */
+    @Bean("deepseekChatStreamingModel")
+    public StreamingChatLanguageModel DeepSeekChatStreamingModel() {
+        return OpenAiStreamingChatModel.builder()
+                .baseUrl(deepSeekUrl)
+                .modelName(deepSeekChatModel)
+                .apiKey(deepSeekApiKey)
+                .maxTokens(1024)
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+    }
+    /**
+     * 配置deepseek-reasoner模型
+     * @return ChatLanguageModel
+     */
+    @Bean("deepseekReasonerModel")
+    public ChatLanguageModel DeepSeekReasonerModel() {
+        return dev.langchain4j.model.openai.OpenAiChatModel.builder()
+                .baseUrl(deepSeekUrl)
+                .modelName(deepSeekReasonerModel)
+                .apiKey(deepSeekApiKey)
+                .maxTokens(1024)
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+    }
+    /**
+     * 配置deepseek-reasoner流式输出模型
+     * @return ChatLanguageModel
+     */
+     @Bean("deepseekReasonerStreamingModel")
+    public StreamingChatLanguageModel DeepSeekReasonerStreamingModel() {
+        return OpenAiStreamingChatModel.builder()
+                .baseUrl(deepSeekUrl)
+                .modelName(deepSeekReasonerModel)
+                .apiKey(deepSeekApiKey)
+                .maxTokens(1024)
+                .logRequests(true)
+                .logResponses(true)
                 .build();
     }
 }
