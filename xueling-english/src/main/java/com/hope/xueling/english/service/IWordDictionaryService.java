@@ -6,7 +6,7 @@ import com.hope.xueling.english.domain.entity.WordDictionary;
 /**
  * 单词字典服务接口
  * @author 谢光湘
- * @since 2025/1/25
+ * @since 2026/1/25
  */
 public interface IWordDictionaryService {
     /**
