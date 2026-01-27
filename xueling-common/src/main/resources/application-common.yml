@@ -124,8 +124,8 @@ llm:
   doubao:
     api-key: ${DOUBAO_API_KEY}
     url: "https://ark.cn-beijing.volces.com/api"
-    model: "doubao-seed-1-6-flash-250828"
-
+    model: "doubao-seed-1-6-flash-250828"  #(响应更快)
+#    model: "doubao-seed-1-6-lite-251015"
   deepseek:
     api-key: ${DEEPSEEK_API_KEY}
     url: "https://api.deepseek.com/"

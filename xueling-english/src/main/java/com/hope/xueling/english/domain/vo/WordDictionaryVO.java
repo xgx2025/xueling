@@ -29,6 +29,14 @@ public class WordDictionaryVO {
      * 音标
      */
     private String phonetic;
+    /**
+     * 英文例句
+     */
+    private String example;
+    /**
+     * 例句中文翻译
+     */
+    private String exampleTranslation;
      /**
      * 是否在单词本中
      */

@@ -2,7 +2,7 @@ package com.hope.xueling.english.domain.dto;
 
 import lombok.Data;
 /**
- * 单词字典数据传输对象
+ * 单词字典数据传输对象（用于AI翻译的响应）
  * @author 谢光湘
  * @since 2026/1/26
  */
@@ -20,4 +20,12 @@ public class WordDictionaryDTO {
      * 单词音标
      */
     private String phonetic;
+    /**
+     * 英文例句
+     */
+    private String example;
+     /**
+     * 例句中文翻译
+     */
+    private String exampleTranslation;
 }
