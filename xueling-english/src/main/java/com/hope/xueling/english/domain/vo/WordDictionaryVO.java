@@ -21,12 +21,10 @@ public class WordDictionaryVO {
      * 单词
      */
     private String word;
-
     /**
      * 释义
      */
     private String meaning;
-
     /**
      * 音标
      */
@@ -35,6 +33,10 @@ public class WordDictionaryVO {
      * 是否在单词本中
      */
     private Boolean inWordBook;
+    /**
+     * 单词本ID
+     */
+    private String wordBookId;
     /**
      * 创建时间
      */

@@ -56,6 +56,7 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
             WordBookDictionaryRelation relation = wordBookDictionaryRelationMapper.selectOne(wbQueryWrapper);
             if (relation != null) {
                 vo.setInWordBook(true);
+                vo.setWordBookId(relation.getWordBookId().toString());
             }
             return vo;
         }
