@@ -45,7 +45,7 @@ public class LLMConfig {
      * 配置豆包聊天模型
      * @return ChatModel
      */
-    @Bean("doubaoChatModel")
+    @Bean("springDoubaoChatModel")
     public ChatModel doubaoChatModel() {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .apiKey(doubaoApiKey)
@@ -65,7 +65,7 @@ public class LLMConfig {
      * 配置DeepSeek聊天模型
      * @return ChatModel
      */
-    @Bean("deepseekChatModel")
+    @Bean("springDeepseekChatModel")
     public ChatModel deepseekChatModel() {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .apiKey(deepSeekApiKey)

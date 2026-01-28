@@ -21,7 +21,7 @@ public class AIConfig {
      * @return ChatClient
      */
     @Bean("doubaoChatClient")
-    public ChatClient doubaoChatClient(@Qualifier("doubaoChatModel") ChatModel doubaoChatModel){
+    public ChatClient doubaoChatClient(@Qualifier("springDoubaoChatModel") ChatModel doubaoChatModel){
         return ChatClient.builder(doubaoChatModel)
                 .defaultAdvisors(SimpleLoggerAdvisor.builder().build())
                 .build();
@@ -33,7 +33,7 @@ public class AIConfig {
      * @return ChatClient
      */
     @Bean("deepseekChatClient")
-    public ChatClient deepseekChatClient(@Qualifier("deepseekChatModel") ChatModel deepseekChatModel) {
+    public ChatClient deepseekChatClient(@Qualifier("springDeepseekChatModel") ChatModel deepseekChatModel) {
         return ChatClient.builder(deepseekChatModel)
                 .defaultAdvisors(SimpleLoggerAdvisor.builder().build())
                 .build();

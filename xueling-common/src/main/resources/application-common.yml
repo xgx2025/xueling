@@ -129,4 +129,5 @@ llm:
   deepseek:
     api-key: ${DEEPSEEK_API_KEY}
     url: "https://api.deepseek.com/"
-    model: "deepseek-chat"
+    chat-model: "deepseek-chat"
+    reasoner-model: "deepseek-reasoner"
