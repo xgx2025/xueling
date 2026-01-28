@@ -3,6 +3,8 @@ CREATE TABLE `word_dictionary` (
                                    `word` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单词',
                                    `meaning` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '中文释义',
                                    `phonetic` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '音标（国际音标）',
+                                   `example` varchar(100) DEFAULT NULL COMMENT '英文例句',
+                                   `example_translation` varchar(100) DEFAULT NULL COMMENT '例句中文翻译'
                                    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                                    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                    PRIMARY KEY (`id`),
