@@ -100,7 +100,9 @@ public class WordBookServiceImpl implements IWordBookService {
     @Override
     public WordBookDetailVO getWordBookDetail(Long wordBookId, Long userId) {
         // 检查单词本是否存在
-        WordBook wordBook = wordBookMapper.selectById(wordBookId);
+        QueryWrapper<WordBook> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", wordBookId).eq("is_deleted", 0);
+        WordBook wordBook = wordBookMapper.selectOne(queryWrapper);
         if (wordBook == null) {
             throw new BusinessException("{}单词本不存在", wordBookId);
         }
