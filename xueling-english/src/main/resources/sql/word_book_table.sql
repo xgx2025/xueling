@@ -9,6 +9,6 @@ CREATE TABLE `word_book` (
                              `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                              `delete_time` datetime DEFAULT NULL COMMENT '删除时间',
                              PRIMARY KEY (`id`),
-                             KEY `idx_is_deleted` (`is_deleted`),
+                             KEY `idx_user_deleted` (`user_id`, `is_deleted`),
                              KEY `idx_create_time` (`create_time` DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='单词本表';
