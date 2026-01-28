@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 
 /**
@@ -52,7 +51,6 @@ public class WordBookServiceImpl implements IWordBookService {
     private static final Set<String> ALLOWED_ICONS = Set.of(
             "📘", "📖", "📚", "📕", "📗", "📙", "🎓", "🗣️", "📝", "🧠", "🌟", "🔥"
     );
-
 
 
     @Override
@@ -99,17 +97,8 @@ public class WordBookServiceImpl implements IWordBookService {
 
     @Override
     public WordBookDetailVO getWordBookDetail(Long wordBookId, Long userId) {
-        // 检查单词本是否存在
-        QueryWrapper<WordBook> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", wordBookId).eq("is_deleted", 0);
-        WordBook wordBook = wordBookMapper.selectOne(queryWrapper);
-        if (wordBook == null) {
-            throw new BusinessException("{}单词本不存在", wordBookId);
-        }
-        // 检查用户是否对单词本有读权限
-        if (!wordBook.getUserId().equals(userId)) {
-            throw new BusinessException("用户{}对单词本{}没有读权限", userId, wordBookId);
-        }
+        // 检查单词本是否存在，用户是否对单词本有读写权限
+        WordBook wordBook = checkWordBookExistsAndHasPermission(wordBookId, userId);
         // 构建VO
         WordBookDetailVO wordBookDetailVO = new WordBookDetailVO();
         wordBookDetailVO.setId(String.valueOf(wordBook.getId()));
@@ -189,15 +178,8 @@ public class WordBookServiceImpl implements IWordBookService {
             log.warn("一次添加单词数量超过限制，用户ID：{}，单词本ID：{}，单词数量：{}", userId, wordBookId, wordIds.size());
             throw new ValidationException("一次最多添加20个单词");
         }
-        // 检查单词本是否存在
-        WordBook wordBook = wordBookMapper.selectById(wordBookId);
-        if (wordBook == null) {
-            throw new BusinessException("单词本不存在");
-        }
-        // 检查用户是否对单词本有写权限
-        if (!wordBook.getUserId().equals(userId)) {
-            throw new BusinessException("用户对单词本没有写权限");
-        }
+        // 检查单词本是否存在，用户是否对单词本有读写权限
+        WordBook wordBook = checkWordBookExistsAndHasPermission(wordBookId, userId);
         // 找出还没有加入单词本的单词
         List<Long> needAddWordIds = new ArrayList<>();
         wordIds.forEach(wordId -> {
@@ -226,15 +208,8 @@ public class WordBookServiceImpl implements IWordBookService {
     public void deleteWordsFromWordBook(RemoveWordsFromWordBookDTO removeWordsFromWordBookDTO, Long userId) {
         Long wordBookId = Long.parseLong(removeWordsFromWordBookDTO.getWordBookId());
         List<Long> wordIds = removeWordsFromWordBookDTO.getWordIds().stream().map(Long::parseLong).toList();
-        // 检查单词本是否存在
-        WordBook wordBook = wordBookMapper.selectById(wordBookId);
-        if (wordBook == null) {
-            throw new BusinessException("单词本不存在");
-        }
-        // 检查用户是否对单词本有写权限
-        if (!wordBook.getUserId().equals(userId)) {
-            throw new BusinessException("用户对单词本没有写权限");
-        }
+        // 检查单词本是否存在，用户是否对单词本有读写权限
+        WordBook wordBook = checkWordBookExistsAndHasPermission(wordBookId, userId);
         // 批量删除单词本中的单词
         QueryWrapper<WordBookDictionaryRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("word_book_id", wordBookId).in("word_id", wordIds);
@@ -244,6 +219,23 @@ public class WordBookServiceImpl implements IWordBookService {
         wordBookMapper.updateById(wordBook);
     }
 
+
+    /**
+     * 检查单词本是否存在，用户是否对单词本有读写权限
+     */
+    private WordBook checkWordBookExistsAndHasPermission(Long wordBookId, Long userId) {
+        QueryWrapper<WordBook> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", wordBookId).eq("is_deleted", 0);
+        WordBook wordBook = wordBookMapper.selectOne(queryWrapper);
+        if (wordBook == null) {
+            throw new BusinessException("单词本不存在");
+        }
+        // 检查用户是否对单词本有读写权限
+        if (!wordBook.getUserId().equals(userId)) {
+            throw new BusinessException("用户对单词本没有读写权限");
+        }
+        return wordBook;
+    }
     //TODO
     /**
      * 计算单词本掌握度
