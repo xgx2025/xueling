@@ -46,7 +46,11 @@ public class WordReviewServiceImpl implements IWordReviewService {
         baseWordPosDTO.setPosCode(wordDictionary.getMeaning().split("\\.")[0]);
         baseWordPosDTO.setWord(baseWord);
         log.info("基础单词词性: {}", baseWordPosDTO);
-        WordPosListDTO wordPosList = getWordOtherPos(baseWord);
+        WordPosListDTO wordPosList = new WordPosListDTO();
+        WordPosListDTO otherPosResult = getWordOtherPos(baseWord);
+        if (otherPosResult != null) {
+            wordPosList = otherPosResult;
+        }
         //将基础单词的词性添加到列表中
         wordPosList.getWordPosList().add(baseWordPosDTO);
         //设置根节点
