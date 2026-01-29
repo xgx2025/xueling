@@ -2,11 +2,13 @@ package com.hope.xueling.english.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hope.xueling.common.exception.ValidationException;
 import com.hope.xueling.common.util.StrUtils;
 import com.hope.xueling.english.domain.dto.WordDictionaryDTO;
 import com.hope.xueling.english.domain.entity.WordBookDictionaryRelation;
 import com.hope.xueling.english.domain.entity.WordDictionary;
 import com.hope.xueling.english.domain.vo.WordDictionaryVO;
+import com.hope.xueling.english.domain.vo.WordVO;
 import com.hope.xueling.english.mapper.WordBookDictionaryRelationMapper;
 import com.hope.xueling.english.mapper.WordDictionaryMapper;
 import com.hope.xueling.english.service.ITranslationService;
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 单词字典服务实现类
@@ -31,9 +35,12 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
 
 
     @Override
-    public WordDictionaryVO queryWordDictionary(String word, Long userId) {
+    public WordDictionaryVO queryWordDictionary(String word) {
         String keyword = word.trim();
         log.info("查询单词: {}", keyword);
+        if (keyword.length()>20){
+            throw new ValidationException("单词长度太长");
+        }
         String english = StrUtils.extractEnglish(keyword);
         String chinese = StrUtils.extractChinese(keyword);
         QueryWrapper<WordDictionary> queryWrapper = new QueryWrapper<>();
@@ -72,6 +79,16 @@ public class WordDictionaryServiceImpl implements IWordDictionaryService {
         vo.setId(id.toString());
         BeanUtils.copyProperties(translation, vo);
         return vo;
+    }
+
+    @Override
+    public List<WordVO> getWordDetailByIds(List<String> wordIds) {
+        List<WordDictionary> wordDictionaryList = wordDictionaryMapper.selectByIds(wordIds);
+       return wordDictionaryList.stream().map(wordDictionary -> {
+            WordVO vo = new WordVO();
+            BeanUtils.copyProperties(wordDictionary, vo);
+            return vo;
+        }).toList();
     }
 
     @Override

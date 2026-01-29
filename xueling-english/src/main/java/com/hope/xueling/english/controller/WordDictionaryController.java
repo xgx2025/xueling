@@ -1,10 +1,8 @@
 package com.hope.xueling.english.controller;
 
 import com.hope.xueling.common.domain.vo.Result;
-import com.hope.xueling.common.util.ThreadLocalUtils;
 import com.hope.xueling.english.domain.vo.WordDictionaryVO;
 import com.hope.xueling.english.service.IWordDictionaryService;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +24,7 @@ public class WordDictionaryController {
      */
     @GetMapping
     public Result<WordDictionaryVO> translateWord(@RequestParam("word") String word) {
-        Claims claims = ThreadLocalUtils.get();
-        Long userId = claims.get("userId", Long.class);
-        WordDictionaryVO wordDictionary = wordDictionaryService.queryWordDictionary(word, userId);
+        WordDictionaryVO wordDictionary = wordDictionaryService.queryWordDictionary(word);
         log.info("查询结果: {}", wordDictionary);
         return Result.success(wordDictionary);
     }

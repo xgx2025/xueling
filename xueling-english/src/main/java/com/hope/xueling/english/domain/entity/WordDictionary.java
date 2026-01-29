@@ -36,6 +36,10 @@ public class WordDictionary {
      * 例句中文翻译
      */
     private String exampleTranslation;
+     /**
+      * 单词插图URL
+      */
+    private String imageUrl;
     /**
      * 创建时间
      */
