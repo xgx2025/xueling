@@ -3,16 +3,13 @@ package com.hope.xueling.english.service.impl;
 import com.hope.xueling.english.domain.dto.WordDictionaryDTO;
 import com.hope.xueling.english.domain.dto.WordPosDTO;
 import com.hope.xueling.english.domain.dto.WordPosListDTO;
-import com.hope.xueling.english.domain.vo.WordDictionaryVO;
 import com.hope.xueling.english.domain.vo.WordFamilyNodeVO;
 import com.hope.xueling.english.service.ITranslationService;
-import com.hope.xueling.english.service.IWordDictionaryService;
 import com.hope.xueling.english.service.IWordReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,8 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class WordReviewServiceImpl implements IWordReviewService {
+    private final ChatClient deepseekChatClient;
     private final ChatClient doubaoChatClient;
-    private final IWordDictionaryService wordDictionaryService;
     private final ITranslationService translationService;
 
     public static final Map<String, String> POS_CHINESE_MAP = Map.of(
@@ -40,19 +37,11 @@ public class WordReviewServiceImpl implements IWordReviewService {
 
     @Override
     public WordFamilyNodeVO getWordFamilyTree(String baseWord) {
-        WordDictionaryVO wordDictionary = wordDictionaryService.queryWordDictionary(baseWord);
-        WordPosDTO baseWordPosDTO = new WordPosDTO();
-        //adj. 快乐的；幸福的；高兴的；乐意的（截取第一个词性adj,取第一个点之前的字符串作为词性代码）
-        baseWordPosDTO.setPosCode(wordDictionary.getMeaning().split("\\.")[0]);
-        baseWordPosDTO.setWord(baseWord);
-        log.info("基础单词词性: {}", baseWordPosDTO);
         WordPosListDTO wordPosList = new WordPosListDTO();
         WordPosListDTO otherPosResult = getWordOtherPos(baseWord);
         if (otherPosResult != null) {
             wordPosList = otherPosResult;
         }
-        //将基础单词的词性添加到列表中
-        wordPosList.getWordPosList().add(baseWordPosDTO);
         //设置根节点
         WordFamilyNodeVO root = WordFamilyNodeVO.createRoot(baseWord);
         for (WordPosDTO wordPosDTO : wordPosList.getWordPosList()) {
@@ -86,7 +75,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
                 # 工作任务
                 接收用户输入的英文单词，返回该单词的其他词性的单词（如名词、动词、形容词等），用于用户对比学习。
                 # 注意
-                对于不存在的单词或其他问题，返回空对象 {}。
+                对于不存在的单词，返回空对象 {}。
                 # 词性简称严格使用英文小写，如下：
                 "n", "名词",
                 "v", "动词",
@@ -97,7 +86,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
                 "conj", "连词",
                 "interj", "感叹词"
                 """;
-        String userPrompt = String.format("请返回单词 %s 的其他词性的单词 ", baseWord);
+        String userPrompt = String.format("请返回单词 %s 的其他词性的单词(包含这个单词本身) ", baseWord);
         return doubaoChatClient.prompt()
                 .system(systemPrompt)
                 .user(userPrompt)
