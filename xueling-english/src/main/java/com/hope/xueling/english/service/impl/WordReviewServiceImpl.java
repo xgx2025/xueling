@@ -42,9 +42,10 @@ public class WordReviewServiceImpl implements IWordReviewService {
     public WordFamilyNodeVO getWordFamilyTree(String baseWord) {
         WordDictionaryVO wordDictionary = wordDictionaryService.queryWordDictionary(baseWord);
         WordPosDTO baseWordPosDTO = new WordPosDTO();
-        //截图Mining中的第一个字符作为词性代码
-        baseWordPosDTO.setPosCode(wordDictionary.getMeaning().substring(0, 1));
+        //adj. 快乐的；幸福的；高兴的；乐意的（截取第一个词性adj,取第一个点之前的字符串作为词性代码）
+        baseWordPosDTO.setPosCode(wordDictionary.getMeaning().split("\\.")[0]);
         baseWordPosDTO.setWord(baseWord);
+        log.info("基础单词词性: {}", baseWordPosDTO);
         WordPosListDTO wordPosList = getWordOtherPos(baseWord);
         //将基础单词的词性添加到列表中
         wordPosList.getWordPosList().add(baseWordPosDTO);
