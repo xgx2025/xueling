@@ -25,6 +25,12 @@ public interface IWordDictionaryService {
      */
     List<WordVO> getWordDetailByIds(List<String> wordIds);
     /**
+     * 通过wordIds获取单词详情
+     * @param wordIds 单词ID列表
+     * @return 单词详情列表
+     */
+    List<WordVO> getWordDetailByIds(List<String> wordIds);
+    /**
      * 保存单词字典
      * @param wordDictionary 单词字典
      */
