@@ -1,11 +1,18 @@
 package com.hope.xueling.xueling.english;
 
 import cn.hutool.core.util.ReUtil;
+import com.hope.xueling.english.domain.vo.WordFamilyNodeVO;
+import com.hope.xueling.english.service.IWordReviewService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class XuelingEnglishApplicationTests {
+    @Autowired
+    private IWordReviewService wordReviewService;
+
+
 
     @Test
     void contextLoads() {
@@ -16,4 +23,10 @@ class XuelingEnglishApplicationTests {
         System.out.println(str2);
     }
 
+    @Test
+    void testGetWordFamilyTree() {
+        String baseWord = "happy";
+        WordFamilyNodeVO root = wordReviewService.getWordFamilyTree(baseWord);
+        System.out.println(root);
+    }
 }

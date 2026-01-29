@@ -2,6 +2,9 @@ package com.hope.xueling.english.service;
 
 import com.hope.xueling.english.domain.dto.WordDictionaryDTO;
 import com.hope.xueling.english.domain.vo.WordDictionaryVO;
+import com.hope.xueling.english.domain.vo.WordVO;
+
+import java.util.List;
 
 /**
  * 单词字典服务接口
@@ -15,6 +18,12 @@ public interface IWordDictionaryService {
      * @return 单词字典
      */
     WordDictionaryVO queryWordDictionary(String word, Long userId);
+    /**
+     * 通过wordIds获取单词详情
+     * @param wordIds 单词ID列表
+     * @return 单词详情列表
+     */
+    List<WordVO> getWordDetailByIds(List<String> wordIds);
     /**
      * 保存单词字典
      * @param wordDictionary 单词字典
