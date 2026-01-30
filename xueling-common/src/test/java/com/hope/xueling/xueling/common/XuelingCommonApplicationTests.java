@@ -13,4 +13,12 @@ class XuelingCommonApplicationTests {
 
     }
 
+    /**
+     * 打印doubao的api-key
+     */
+    @Test
+    void printDoubaoApiKey() {
+        System.out.println("doubao api-key: " + System.getenv("DOUBAO_API_KEY"));
+    }
+
 }

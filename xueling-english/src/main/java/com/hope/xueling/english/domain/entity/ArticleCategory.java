@@ -8,14 +8,14 @@ import lombok.Data;
  * @since 2026/1/26
  */
 @Data
-public class MaterialCategory {
+public class ArticleCategory {
     /**
-     * 阅读材料分类ID
+     * 阅读文章分类ID
      */
     private Long id;
 
      /**
-      * 阅读材料分类名称
+      * 阅读文章分类名称
       */
     private String name;
 }

@@ -87,7 +87,7 @@ public class LLMConfig {
      * 配置deepseek-chat模型
      * @return ChatLanguageModel
      */
-    @Bean("deepseekChatModel")
+    @Bean("DeepseekChatModel")
     public ChatLanguageModel DeepSeekChatModel() {
         return dev.langchain4j.model.openai.OpenAiChatModel.builder()
                 .baseUrl(deepSeekUrl)
@@ -103,7 +103,7 @@ public class LLMConfig {
      * 配置deepseek-chat流式输出模型
      * @return ChatLanguageModel
      */
-    @Bean("deepseekChatStreamingModel")
+    @Bean("DeepseekChatStreamingModel")
     public StreamingChatLanguageModel DeepSeekChatStreamingModel() {
         return OpenAiStreamingChatModel.builder()
                 .baseUrl(deepSeekUrl)
@@ -118,7 +118,7 @@ public class LLMConfig {
      * 配置deepseek-reasoner模型
      * @return ChatLanguageModel
      */
-    @Bean("deepseekReasonerModel")
+    @Bean("DeepseekReasonerModel")
     public ChatLanguageModel DeepSeekReasonerModel() {
         return dev.langchain4j.model.openai.OpenAiChatModel.builder()
                 .baseUrl(deepSeekUrl)
@@ -133,7 +133,7 @@ public class LLMConfig {
      * 配置deepseek-reasoner流式输出模型
      * @return ChatLanguageModel
      */
-     @Bean("deepseekReasonerStreamingModel")
+     @Bean("DeepseekReasonerStreamingModel")
     public StreamingChatLanguageModel DeepSeekReasonerStreamingModel() {
         return OpenAiStreamingChatModel.builder()
                 .baseUrl(deepSeekUrl)
