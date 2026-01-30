@@ -69,7 +69,7 @@ CREATE TABLE `reading_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户阅读状态表';
 
 -- 文章收藏表
-CREATE TABLE `material_favorite` (
+CREATE TABLE `article_favorite` (
                             `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '收藏ID',
                             `user_id` bigint unsigned NOT NULL COMMENT '用户ID',
                             `article_id` bigint unsigned NOT NULL COMMENT '文章ID',
