@@ -10,7 +10,7 @@ import static dev.langchain4j.service.spring.AiServiceWiringMode.EXPLICIT;
  * @author 谢光益
  * @since 2026/1/26
  */
-@AiService(wiringMode = EXPLICIT,chatModel = "deepseekChatModel")//chatModel 对应的是 Spring Bean 容器中的 bean name，默认就是模型类名首字母小写的形式。
+@AiService(wiringMode = EXPLICIT,chatModel = "DeepseekChatModel")//chatModel 对应的是 Spring Bean 容器中的 bean name，默认就是模型类名首字母小写的形式。
 public interface SmartTranslation {
 
     /**

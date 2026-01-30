@@ -15,17 +15,28 @@ public class Article {
     private Long id;
 
     /**
+     * 作者
+     */
+    private String author;
+
+    /**
      * 文章标题
      */
     private String title;
 
     /**
+     * 中文标题
+     */
+     private String chineseTitle;
+
+    /**
      * 文章内容
+     * 格式：每个小标题前加##，段落之间用\n分隔，句子之间用&分隔
      */
     private String content;
 
     /**
-     * 文章段落数
+     * 文章感悟
      */
-    private Integer paragraphCount;
+    private String articleInsights;
 }

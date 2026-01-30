@@ -16,11 +16,15 @@ CREATE TABLE `article_category` (
 CREATE TABLE `article` (
                             `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '文章ID',
                             `title` varchar(255) NOT NULL COMMENT '标题',
+                            `chinese_title` varchar(255) NOT NULL COMMENT '中文标题',
                             `category_id` bigint unsigned NOT NULL COMMENT '分类ID',
                             `tag` varchar(255) DEFAULT NULL COMMENT '标签（多个用逗号分隔）',
                             `author` varchar(100) NOT NULL COMMENT '作者',
                             `content` varchar(5000) NOT NULL COMMENT '内容',
                             `chinese_meaning` varchar(5000) NOT NULL COMMENT '中文翻译',
+                            `vocabulary_phrases_summary` varchar(5000) DEFAULT NULL COMMENT '词汇短语总结',
+                            `article_insights` varchar(150) DEFAULT NULL COMMENT '文章感悟',
+                            `image_url` varchar(80) DEFAULT NULL COMMENT '图片url',
                             `is_free` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '是否免费（0：否，1：是）',
                             `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                             `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -83,6 +87,23 @@ CREATE TABLE `article_favorite` (
                             CONSTRAINT `fk_favorite_article` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章收藏表';
 
+
+-- 用户文章测试题表
+CREATE TABLE `article_reading_test` (
+                                    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '测试题ID',
+                                    `user_id` bigint unsigned NOT NULL COMMENT '用户ID',
+                                    `article_id` bigint unsigned NOT NULL COMMENT '文章ID',
+                                    `difficulty` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '测试难度（0：简单，1：中等，2：困难）',
+                                    `content` varchar(5000) NOT NULL COMMENT '测试内容',
+                                    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                    PRIMARY KEY (`id`),
+                                    UNIQUE KEY `uk_user_article_test` (`user_id`, `article_id`),
+                                    KEY `idx_user_id` (`user_id`),
+                                    KEY `idx_article_id` (`article_id`),
+                                    CONSTRAINT `fk_reading_test_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+                                    CONSTRAINT `fk_reading_test_article` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户文章测试题表';
 
 
 # -- 书籍表
