@@ -5,7 +5,9 @@ import com.hope.xueling.common.exception.ValidationException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.english.domain.entity.Article;
 import com.hope.xueling.english.domain.entity.ArticleCategory;
+import com.hope.xueling.english.mapper.ArticleFavoriteMapper;
 import com.hope.xueling.english.mapper.ArticleMapper;
+import com.hope.xueling.english.mapper.ReadingProgressMapper;
 import com.hope.xueling.english.mapper.TestMapper;
 import com.hope.xueling.english.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,8 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final UserMapper userMapper;
     private final TestMapper testMapper;
+    private final ReadingProgressMapper readingProgressMapper;
+    private final ArticleFavoriteMapper articleFavoriteMapper;
     private final SmartReadingAssistant smartReadingAssistant;
 
     @Override
@@ -36,9 +40,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> getArticlesByCategoryId(String categoryId) {
+    public List<Article> getArticlesByCategoryId(Long categoryId) {
         //检查分类ID是否为空
-        if (categoryId == null || categoryId.isEmpty()) {
+        if (categoryId == null) {
             throw new ValidationException("分类 ID 不能为空");
         }
         List<Article> articles = articleMapper.selectArticlesByCategoryId(categoryId);
@@ -46,8 +50,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public String getArticleTranslation(Long userId, String articleId) {
-        if (userId == null || articleId == null || articleId.isEmpty()) {
+    public String getArticleTranslation(Long userId, Long articleId) {
+        if (userId == null || articleId == null) {
             throw new ValidationException("用户ID和文章ID不能为空");
         }
         String articleTranslation = articleMapper.selectArticleTranslation(userId, articleId);
@@ -74,8 +78,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public String summarizeEnglishPhrases(Long userId, String articleId) {
-        if (userId == null || articleId == null || articleId.isEmpty()) {
+    public String summarizeEnglishPhrases(Long userId, Long articleId) {
+        if (userId == null || articleId == null) {
             throw new ValidationException("用户ID和文章ID不能为空");
         }
         //检查用户是否是会员,并从数据库获取词汇短语汇总结果
@@ -98,29 +102,36 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public String readTest(Long userId, String articleId, String difficulty) {
-        if (userId == null || articleId == null || articleId.isEmpty() || difficulty == null || difficulty.isEmpty()) {
+    public String readTest(Long userId, Long articleId, Integer difficulty) {
+        if (userId == null || articleId == null || difficulty == null || difficulty < 0) {
             throw new ValidationException("用户ID、文章ID和难度不能为空");
         }
         if (userMapper.isVip(userId) == null) {
             throw new ValidationException("用户不是会员，不能使用阅读测试功能");
         }
         //先从数据库获取阅读测试题
-        String readTest = testMapper.selectReadTest(userId, articleId);
+        String readTest = testMapper.selectReadTest(userId, articleId, difficulty);
+
         if (readTest == null) {
             //获取文章内容
             String content = getArticleContentForAi(articleId);
             //调用大模型生成测试题
-            readTest = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
-            //更新数据库中的测试题
-            testMapper.updateReadTest(userId, articleId, readTest);
+            content = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
+            //如果测试题不存在，生成测试题
+            if(testMapper.selectIdByArticleIdAndUserId(articleId, userId) == null) {
+                testMapper.insertReadTest(userId, articleId, content, difficulty);
+            } else {
+                //如果测试id存在，更新数据库中的测试题
+                testMapper.updateReadTest(userId, articleId, content, difficulty);
+            }
         }
+        //返回测试题内容
         return readTest;
     }
 
     @Override
-    public String reReadTest(Long userId, String articleId, String difficulty) {
-        if (userId == null || articleId == null || articleId.isEmpty() || difficulty == null || difficulty.isEmpty()) {
+    public String reReadTest(Long userId, Long articleId, Integer difficulty) {
+        if (userId == null || articleId == null || difficulty == null || difficulty < 0) {
             throw new ValidationException("用户ID、文章ID和难度不能为空");
         }
         if (userMapper.isVip(userId) == null) {
@@ -131,8 +142,58 @@ public class ArticleServiceImpl implements ArticleService {
         //调用大模型生成测试题
         String reReadTest = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
         //更新数据库中的测试题
-        testMapper.updateReadTest(userId, articleId, reReadTest);
+        testMapper.updateReadTest(userId, articleId, reReadTest, difficulty);
         return reReadTest;
+    }
+
+    @Override
+    public void collectArticle(Long userId, Long articleId) {
+        if (userId == null || articleId == null) {
+            throw new ValidationException("用户ID和文章ID不能为空");
+        }
+        //检查用户是否阅读完文章
+        if (readingProgressMapper.selectReadStatus(userId, articleId) == null) {
+            throw new ValidationException("用户未阅读完文章，不能收藏文章");
+        }
+
+        //更新数据库中的文章收藏
+        articleFavoriteMapper.updateCollectArticle(userId, articleId);
+    }
+
+     @Override
+    public void completeReadArticle(Long userId, Long articleId) {
+        if(userId == null || articleId == null) {
+            throw new ValidationException("用户ID和文章ID不能为空");
+        }
+        //检查用户是否阅读时间是否超过2.5分钟(150秒)
+        if (readingProgressMapper.selectReadTime(userId, articleId) < 150) {
+            throw new ValidationException("总阅读时间不足2.5分钟，不能完成阅读");
+        }
+        //更新数据库中的阅读进度
+        readingProgressMapper.updateReadStatus(userId, articleId);
+    }
+
+    @Override
+    public void addReadTime(Long userId, Long articleId, Integer readTime) {
+        //更新数据库中的阅读时间
+        if(userId == null || articleId == null || readTime == null || readTime < 0) {
+            throw new ValidationException("用户ID、文章ID和阅读时间不能为空");
+        }
+        //时间要大于等于150秒
+        if (readTime < 150) {
+            throw new ValidationException("阅读时间必须大于等于150秒");
+        }
+        //更新数据库中的阅读时间
+        readingProgressMapper.updateReadTime(userId, articleId, readTime);
+    }
+
+    @Override
+    public void cancelCollectArticle(Long userId, Long articleId) {
+        if(userId == null || articleId == null) {
+            throw new ValidationException("用户ID和文章ID不能为空");
+        }
+        //更新数据库中的文章收藏
+        articleFavoriteMapper.deleteCollectArticle(userId, articleId);
     }
 
     /**
@@ -140,8 +201,8 @@ public class ArticleServiceImpl implements ArticleService {
      * @param articleId 文章ID
      * @return 文章内容
      */
-    public String getArticleContentForAi(String articleId) {
-        if (articleId == null || articleId.isEmpty()) {
+    public String getArticleContentForAi(Long articleId) {
+        if (articleId == null) {
             throw new ValidationException("文章ID不能为空");
         }
         String tile = articleMapper.selectTitleById(articleId);

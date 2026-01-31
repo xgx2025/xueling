@@ -4,6 +4,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
@@ -53,14 +56,29 @@ public class JwtTokenUtils {
                 .compact();
     }
 
+    // 生成安全的Key对象（推荐）
+    public static SecretKey generateKey(String secret) {
+        // 确保密钥长度符合要求（HS256至少32字节）
+        byte[] keyBytes = secret.getBytes();
+        if (keyBytes.length < 32) {
+            // 如果密钥太短，进行填充
+            byte[] padded = new byte[32];
+            System.arraycopy(keyBytes, 0, padded, 0, Math.min(keyBytes.length, 32));
+            keyBytes = padded;
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+//TODO 检查代码
     /**
      * 验证Token并获取claims
      */
     public static Claims getClaimsFromToken(String token, String secret) {
+        SecretKey key = generateKey(secret);
         return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)  // 注意方法名变化
+                .getPayload();  // 不再是getBody()
     }
 
     /**

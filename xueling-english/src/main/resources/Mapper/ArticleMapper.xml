@@ -11,4 +11,10 @@
             and (select vip_level from user where id = #{userId}) > 0
         </if>
     </select>
+
+    <!-- 检查用户是否阅读完文章 -->
+    <select id="acompleteReadArticle" resultType="java.lang.Long">
+        select id from article_reading_progress where user_id = #{userId} and article_id = #{articleId}
+        and progress_status = 2
+    </select>
 </mapper>
