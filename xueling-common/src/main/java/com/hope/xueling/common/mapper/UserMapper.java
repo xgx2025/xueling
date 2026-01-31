@@ -23,4 +23,6 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Select("select id from user where id = #{userId} and vip_level > 0")
     Long isVip(Long userId);
+
+
 }

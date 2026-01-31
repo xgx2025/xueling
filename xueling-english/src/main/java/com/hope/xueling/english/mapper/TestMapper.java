@@ -2,14 +2,14 @@ package com.hope.xueling.english.mapper;
 
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
-import java.util.Map;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 测试Mapper
  * @author 谢光益
  * @since 2026/1/30
  */
+@Mapper
 public interface TestMapper {
 
     /**
@@ -29,15 +29,6 @@ public interface TestMapper {
      */
     @Select("select id, content from article_reading_test where user_id = #{userId} and article_id = #{articleId} and difficulty = #{difficulty}")
     String selectReadTest(Long userId, Long articleId, Integer difficulty);
-
-    /**
-     * 根据文章ID获取阅读测试题
-     * @param articleId 文章ID
-     * @param difficulty 测试难度
-     * @return 阅读测试题
-     */
-    @Select("select content from article_reading_test where id = #{articleId}")
-    String selectReadTest(String articleId, Integer difficulty);
 
     /**
      * 插入阅读测试题

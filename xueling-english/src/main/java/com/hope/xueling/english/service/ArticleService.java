@@ -74,6 +74,13 @@ public interface ArticleService {
      */
     void collectArticle(Long userId, Long articleId);
 
+    /**
+     * 更新阅读状态
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     */
+    void updateReadingStatus(Long userId, Long articleId);
+
      /**
      * 完成阅读文章
      * @param userId 用户ID

@@ -20,7 +20,7 @@ public interface ArticleMapper {
      * 获取阅读材料分类列表
      * @return 阅读文章分类列表
      */
-    @Select("select distinct id, namefrom article_category where is_active = 1 order by sort_order")
+    @Select("select distinct id, name from article_category where is_active = 1 order by sort_order")
     List<ArticleCategory> selectArticleCategories();
 
     /**
