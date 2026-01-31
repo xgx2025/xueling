@@ -25,43 +25,47 @@ public interface ArticleMapper {
 
     /**
      * 根据分类ID获取阅读文章文章列表
+     *
      * @param categoryId 分类ID
      * @return 阅读文章文章列表
      */
     @Select("select id, title, author, content from article where category_id = #{categoryId}")
-    List<Article> selectArticlesByCategoryId(String categoryId);
+    List<Article> selectArticlesByCategoryId(Long categoryId);
 
     /**
      * 根据文章ID获取文章翻译
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param articleId 文章ID
      * @return 文章翻译
      */
-    String selectArticleTranslation(Long userId, String articleId);
+    String selectArticleTranslation(Long userId, Long articleId);
 
     /**
      * 根据文章ID获取文章词汇短语汇总结果
+     *
      * @param articleId 文章ID
      * @return 文章词汇短语汇总结果
      */
     @Select("select id, vocabulary_phrases_summary from article where id = #{articleId}")
-    Map<Long, String> selectArticlePhrases(String articleId);
+    Map<Long, String> selectArticlePhrases(Long articleId);
 
     /**
      * 根据文章ID获取文章内容
+     *
      * @param articleId 文章ID
      * @return 文章内容
      */
     @Select("select content from article where id = #{articleId}")
-    String selectContentById(String articleId);
+    String selectContentById(Long articleId);
 
     /**
      * 插入文章词汇短语汇总结果
-     * @param articleId 文章ID
+     *
+     * @param articleId               文章ID
      * @param summarizeEnglishPhrases 词汇短语汇总结果
      */
     @Update("update article set vocabulary_phrases_summary = #{summarizeEnglishPhrases} where id = #{articleId}")
-    void updateArticlePhrases(String articleId, String summarizeEnglishPhrases);
+    void updateArticlePhrases(Long articleId, String summarizeEnglishPhrases);
 
     /**
      * 根据文章ID获取文章标题
@@ -69,12 +73,5 @@ public interface ArticleMapper {
      * @return 文章标题
      */
     @Select("select title from article where id = #{articleId}")
-    String selectTitleById(String articleId);
-
-    /**
-     * 根据文章ID获取阅读测试题
-     * @param articleId 文章ID
-     * @return 阅读测试题
-     */
-    String selectReadTest(String articleId);
+    String selectTitleById(Long articleId);
 }

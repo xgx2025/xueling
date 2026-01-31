@@ -44,4 +44,32 @@ public interface SmartReadingAssistant {
      */
     @SystemMessage("/prompt/readInsights.txt")
     String generateArticleThoughts(String message);
+
+    /**
+     * 英语文章格式化
+     * @param message 英语文章
+     * @return 格式化后的英语文章
+     */
+    @SystemMessage("/prompt/formatEnglishArticle.txt")
+    String formatEnglishArticle(String message);
+
+    /**
+     * 翻译英文标题
+     */
+    @SystemMessage("你是专业的英语老师，将英文标题翻译成中文，直接给出中文翻译，不要响应其它文字。")
+    String translateTitle(String message);
+
+    /**
+     * 生成图片提示词
+     * @param message 阅读文章
+     * @return 图片提示词
+     */
+    @SystemMessage("/prompt/generateImagePrompt.txt")
+    String generateImagePrompt(String message);
+
+    /**
+     * 将文章内容翻译成中文
+     */
+    @SystemMessage("/prompt/translateArticle.txt")
+    String translateArticle(String message);
 }

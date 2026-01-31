@@ -8,6 +8,7 @@ import com.hope.xueling.english.service.impl.ArticleServiceImpl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-@RestController
+@RestController("userArticleController")
 @RequestMapping("/read")
 public class ArticleController {
 
@@ -43,7 +44,7 @@ public class ArticleController {
      * @return 阅读文章列表
      */
     @GetMapping("/articles")
-    public Result<List<Article>> getArticlesByCategoryId(@RequestParam("categoryId") String categoryId) {
+    public Result<List<Article>> getArticlesByCategoryId(@RequestParam("categoryId") Long categoryId) {
         log.info("根据分类ID获取阅读文章列表，分类ID：{}", categoryId);
         List<Article> articles = readService.getArticlesByCategoryId(categoryId);
         return Result.success(articles, "根据分类ID获取阅读文章列表成功");
@@ -53,10 +54,10 @@ public class ArticleController {
      * 根据文章ID获取文章翻译
      * @param articleId 文章ID
      * @return 文章翻译
-     * 翻译文章内容格式：TODO
+     * 翻译文章内容格式：每个小标题前加##，段落之间用\n分隔，句子之间用&分隔
      */
     @GetMapping("/article/translation")
-    public Result<String> getArticleTranslation(@RequestParam("articleId") String articleId) {
+    public Result<String> getArticleTranslation(@RequestParam("articleId") Long articleId) {
         log.info("根据文章ID获取文章翻译，文章ID：{}", articleId);
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
@@ -84,7 +85,7 @@ public class ArticleController {
      * @return 汇总结果
      */
     @GetMapping("/phrases")
-    public Result<String> summarizeEnglishPhrases(@RequestParam("articleId") String articleId) {
+    public Result<String> summarizeEnglishPhrases(@RequestParam("articleId") Long articleId) {
         log.info("词汇短语汇总，文章ID：{}", articleId);
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
@@ -93,13 +94,13 @@ public class ArticleController {
     }
 
     /**
-     * 阅读测试题
+     * 获取阅读测试题
      * @param articleId 文章ID
      * @param difficulty 难度
      * @return 测试题
      */
-    @GetMapping("/test")
-    public Result<String> readTest(@RequestParam("articleId") String articleId,@RequestParam("difficulty") String difficulty) {
+    @PostMapping("/test")
+    public Result<String> readTest(@RequestParam("articleId") Long articleId,@RequestParam("difficulty") Integer difficulty) {
         log.info("阅读测试题，文章ID：{}，难度：{}", articleId,difficulty);
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
@@ -113,8 +114,8 @@ public class ArticleController {
      * @param difficulty 难度
      * @return 测试题
      */
-    @PostMapping("/test")
-    public Result<String> reReadTest(@RequestParam("articleId") String articleId,@RequestParam("difficulty") String difficulty) {
+    @PostMapping("/retest")
+    public Result<String> reReadTest(@RequestParam("articleId") Long articleId,@RequestParam("difficulty") Integer difficulty) {
         log.info("重新生成阅读测试题，文章ID：{}，难度：{}", articleId,difficulty);
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
@@ -122,5 +123,60 @@ public class ArticleController {
         return Result.success(test, "重新生成阅读测试题成功");
     }
 
+    /**
+     * 增加文章阅读时间（秒）
+     * @param articleId 文章ID
+     * @param readTime 阅读时间（秒）（要大于等于150秒）
+     */
+    @PostMapping("/readTime")
+    public Result<String> addReadTime(@RequestParam("articleId") Long articleId,@RequestParam("readTime") Integer readTime) {
+        log.info("增加文章阅读时间，文章ID：{}，阅读时间：{}", articleId,readTime);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        readService.addReadTime(userId,articleId,readTime);
+        return Result.success("增加文章阅读时间成功");
+    }
+
+    /**
+     * 完成阅读文章（需要阅读时间超过2.5分钟）
+     * @param articleId 文章ID
+     * @return 完成结果
+     */
+    @PostMapping("/complete")
+    public Result<String> completeReadArticle(@RequestParam("articleId") Long articleId) {
+        log.info("完成文章阅读，文章ID：{}", articleId);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        readService.completeReadArticle(userId,articleId);
+        return Result.success("完成文章阅读");
+    }
+
+    /**
+     * 文章收藏
+     * @param articleId 文章ID
+     * @return 收藏结果
+     */
+    @PostMapping("/collect")
+    public Result<String> collectArticle(@RequestParam("articleId") Long articleId) {
+        log.info("文章收藏，文章ID：{}", articleId);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        readService.collectArticle(userId,articleId);
+        return Result.success("文章收藏成功");
+    }
+
+    /**
+     * 取消文章收藏
+     * @param articleId 文章ID
+     * @return 取消收藏结果
+     */
+    @DeleteMapping("/cancelCollect")
+    public Result<String> cancelCollectArticle(@RequestParam("articleId") Long articleId) {
+        log.info("取消文章收藏，文章ID：{}", articleId);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        readService.cancelCollectArticle(userId,articleId);
+        return Result.success("取消文章收藏成功");
+    }
 
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * 统一响应对象
  * @author 谢光湘
- * @date 2026/1/20
+ * @since 2026/1/20
  */
 @Data
 @NoArgsConstructor

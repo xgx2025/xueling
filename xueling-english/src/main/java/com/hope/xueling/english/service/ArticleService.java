@@ -23,7 +23,7 @@ public interface ArticleService {
      * @param categoryId 分类ID
      * @return 阅读材料列表
      */
-    List<Article> getArticlesByCategoryId(String categoryId);
+    List<Article> getArticlesByCategoryId(Long categoryId);
 
     /***
      * 获取文章翻译
@@ -31,7 +31,7 @@ public interface ArticleService {
      * @param articleId 文章ID
      * @return 文章翻译
      */
-    String getArticleTranslation(Long userId, String articleId);
+    String getArticleTranslation(Long userId, Long articleId);
 
     /**
      * 句子分析
@@ -47,7 +47,7 @@ public interface ArticleService {
      * @param articleId 文章ID
      * @return 汇总结果
      */
-    String summarizeEnglishPhrases(Long userId, String articleId);
+    String summarizeEnglishPhrases(Long userId, Long articleId);
 
     /**
      * 阅读测试
@@ -56,7 +56,7 @@ public interface ArticleService {
      * @param difficulty 难度
      * @return 测试结果
      */
-    String readTest(Long userId, String articleId, String difficulty);
+    String readTest(Long userId, Long articleId, Integer difficulty);
 
     /**
      * 重新阅读测试
@@ -65,5 +65,34 @@ public interface ArticleService {
      * @param difficulty 难度
      * @return 测试结果
      */
-    String reReadTest(Long userId, String articleId, String difficulty);
+    String reReadTest(Long userId, Long articleId, Integer difficulty);
+
+    /**
+     * 文章收藏
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     */
+    void collectArticle(Long userId, Long articleId);
+
+     /**
+     * 完成阅读文章
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     */
+    void completeReadArticle(Long userId, Long articleId);
+
+    /**
+     * 添加阅读时间
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     * @param readTime 阅读时间
+     */
+    void addReadTime(Long userId, Long articleId, Integer readTime);
+
+    /**
+     * 取消文章收藏
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     */
+    void cancelCollectArticle(Long userId, Long articleId);
 }

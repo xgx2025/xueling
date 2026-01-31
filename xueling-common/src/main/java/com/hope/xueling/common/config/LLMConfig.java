@@ -2,6 +2,8 @@ package com.hope.xueling.common.config;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.image.ImageModel;
+import dev.langchain4j.model.openai.OpenAiImageModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -10,6 +12,8 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Duration;
 
 /**
  * 大语言模型配置类
@@ -38,6 +42,15 @@ public class LLMConfig {
     private String deepSeekChatModel;
     @Value("${llm.deepseek.reasoner-model}")
     private String deepSeekReasonerModel;
+    /**
+     * 智普模型相关配置
+     */
+    @Value("${llm.zhipu.api-key}")
+    private String zhipuApiKey;
+    @Value("${llm.zhipu.url}")
+    private String zhipuUrl;
+    @Value("${llm.zhipu.image-model}")
+    private String zhipuImageModel;
 
 
 
@@ -93,9 +106,10 @@ public class LLMConfig {
                 .baseUrl(deepSeekUrl)
                 .modelName(deepSeekChatModel)
                 .apiKey(deepSeekApiKey)
-                .maxTokens(1024)
+                .maxTokens(10000)
                 .logRequests(true)
                 .logResponses(true)
+                .timeout(Duration.ofSeconds(600))
                 .build();
     }
 
@@ -109,9 +123,10 @@ public class LLMConfig {
                 .baseUrl(deepSeekUrl)
                 .modelName(deepSeekChatModel)
                 .apiKey(deepSeekApiKey)
-                .maxTokens(1024)
+                .maxTokens(10000)
                 .logRequests(true)
                 .logResponses(true)
+                .timeout(Duration.ofSeconds(600))
                 .build();
     }
     /**
@@ -124,9 +139,10 @@ public class LLMConfig {
                 .baseUrl(deepSeekUrl)
                 .modelName(deepSeekReasonerModel)
                 .apiKey(deepSeekApiKey)
-                .maxTokens(1024)
+                .maxTokens(10000)
                 .logRequests(true)
                 .logResponses(true)
+                .timeout(Duration.ofSeconds(600))
                 .build();
     }
     /**
@@ -134,12 +150,28 @@ public class LLMConfig {
      * @return ChatLanguageModel
      */
      @Bean("DeepseekReasonerStreamingModel")
-    public StreamingChatLanguageModel DeepSeekReasonerStreamingModel() {
-        return OpenAiStreamingChatModel.builder()
-                .baseUrl(deepSeekUrl)
-                .modelName(deepSeekReasonerModel)
-                .apiKey(deepSeekApiKey)
-                .maxTokens(1024)
+     public StreamingChatLanguageModel DeepSeekReasonerStreamingModel() {
+         return OpenAiStreamingChatModel.builder()
+                 .baseUrl(deepSeekUrl)
+                 .modelName(deepSeekReasonerModel)
+                 .apiKey(deepSeekApiKey)
+                 .maxTokens(10000)
+                 .logRequests(true)
+                 .logResponses(true)
+                 .timeout(Duration.ofSeconds(600))
+                 .build();
+     }
+
+    /**
+     * 配置智普图像模型
+     * @return ChatLanguageModel
+     */
+    @Bean("ZhiPuImageModel")
+    public ImageModel ZhiPuImageModel() {
+        return OpenAiImageModel.builder()
+                .baseUrl(zhipuUrl)
+                .modelName(zhipuImageModel)
+                .apiKey(zhipuApiKey)
                 .logRequests(true)
                 .logResponses(true)
                 .build();

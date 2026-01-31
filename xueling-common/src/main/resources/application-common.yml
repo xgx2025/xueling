@@ -1,6 +1,7 @@
 server:
   port: 9012
 
+
 spring:
   ai:
     openai:
@@ -9,6 +10,10 @@ spring:
         base-url: "https://api.deepseek.com/"
         options:
           model: "deepseek-chat"
+  http:
+    client:
+      connect-timeout: 600s #连接超时时间
+      read-timeout: 600s #读取超时时间
 
   datasource:
     # 1. 基本连接信息
@@ -96,6 +101,18 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: 100 # 连接等待时间（毫秒）
+# Jackson配置
+  jackson:
+    default-property-inclusion: NON_NULL # 忽略NULL属性
+    deserialization:
+      fail-on-unknown-properties: false  # 忽略未知属性
+      fail-on-ignored-properties: false
+      fail-on-invalid-subtype: false
+    # 序列化配置
+    serialization:
+      fail-on-empty-beans: false
+      write-dates-as-timestamps: false
+      write-date-timestamps-as-nanoseconds: false
 
 
 #阿里云OSS配置
@@ -131,3 +148,7 @@ llm:
     url: "https://api.deepseek.com/"
     chat-model: "deepseek-chat"
     reasoner-model: "deepseek-reasoner"
+  zhipu:
+    api-key: ${ZHIPU_API_KEY}
+    url: "https://open.bigmodel.cn/api/paas/v4"
+    image-model: "cogview-3-flash"
