@@ -97,6 +97,6 @@ public class ArticleServiceImpl implements ArticleService {
      * @return 文章内容
      */
     public String getArticleContent(String content, String title) {
-        return "文章的格式：每个小标题前有##，段落之间用\\n分隔，句子之间用&分隔\n文章标题：" + title + "\n文章的内容；\n" + content;
+        return "这是英语文章的格式：每个小标题前有##，段落之间用\\n分隔，句子之间用&分隔\n文章标题：" + title + "\n这是英语文章的内容；\n" + content;
     };
 }

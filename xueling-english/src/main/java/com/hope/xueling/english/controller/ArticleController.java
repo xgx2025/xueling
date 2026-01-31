@@ -138,6 +138,18 @@ public class ArticleController {
     }
 
     /**
+     * 更新阅读进度为阅读中
+     * @param articleId 文章ID
+     */
+    @PostMapping("/reading")
+    public Result<String> updateReadingStatus(@RequestParam("articleId") Long articleId) {
+        log.info("更新阅读进度为阅读中，文章ID：{}", articleId);
+        Claims claims = ThreadLocalUtils.get();
+        Long userId = claims.get("userId", Long.class);
+        readService.updateReadingStatus(userId,articleId);
+        return Result.success("更新阅读进度为阅读中成功");
+    }
+    /**
      * 完成阅读文章（需要阅读时间超过2.5分钟）
      * @param articleId 文章ID
      * @return 完成结果

@@ -160,7 +160,16 @@ public class ArticleServiceImpl implements ArticleService {
         articleFavoriteMapper.updateCollectArticle(userId, articleId);
     }
 
-     @Override
+    @Override
+    public void updateReadingStatus(Long userId, Long articleId) {
+        if(userId == null || articleId == null) {
+            throw new ValidationException("用户ID和文章ID不能为空");
+        }
+        //更新数据库中的阅读进度为阅读中
+        readingProgressMapper.updateReadingStatus(userId, articleId);
+    }
+
+    @Override
     public void completeReadArticle(Long userId, Long articleId) {
         if(userId == null || articleId == null) {
             throw new ValidationException("用户ID和文章ID不能为空");

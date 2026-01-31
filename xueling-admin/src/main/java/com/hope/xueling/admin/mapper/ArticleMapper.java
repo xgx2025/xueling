@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @since 2026/1/31
  */
 @Repository("adminArticleMapper")
-@Mapper()
+@Mapper
 public interface ArticleMapper {
 
     /**
