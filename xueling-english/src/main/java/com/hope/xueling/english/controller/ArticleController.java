@@ -79,8 +79,9 @@ public class ArticleController {
         return Result.success(sentenceAnalysis, "句子分析成功");
     }
 
+    //TODO 待完善
     /**
-     * 词汇短语汇总
+     * 词汇短语汇总（用于用户上传的文章）
      * @param articleId 文章ID
      * @return 汇总结果
      */
@@ -101,10 +102,11 @@ public class ArticleController {
      */
     @PostMapping("/test")
     public Result<String> readTest(@RequestParam("articleId") Long articleId,@RequestParam("difficulty") Integer difficulty) {
-        log.info("阅读测试题，文章ID：{}，难度：{}", articleId,difficulty);
+        log.info("获取阅读测试题中，文章ID：{}，难度：{}", articleId,difficulty);
         Claims claims = ThreadLocalUtils.get();
         Long userId = claims.get("userId", Long.class);
         String test = readService.readTest(userId,articleId,difficulty);
+        log.info("获取阅读测试题成功");
         return Result.success(test, "阅读测试题成功");
     }
 
@@ -149,6 +151,7 @@ public class ArticleController {
         readService.updateReadingStatus(userId,articleId);
         return Result.success("更新阅读进度为阅读中成功");
     }
+
     /**
      * 完成阅读文章（需要阅读时间超过2.5分钟）
      * @param articleId 文章ID

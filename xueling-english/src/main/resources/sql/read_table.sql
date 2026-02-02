@@ -22,7 +22,7 @@ CREATE TABLE `article` (
                             `author` varchar(100) NOT NULL COMMENT '作者',
                             `content` TEXT NOT NULL COMMENT '内容',
                             `chinese_meaning` TEXT NOT NULL COMMENT '中文翻译',
-                            `vocabulary_phrases_summary` varchar(5000) DEFAULT NULL COMMENT '词汇短语总结',
+                            `vocabulary_phrases_summary` text DEFAULT NULL COMMENT '词汇短语总结',
                             `article_insights` varchar(250) DEFAULT NULL COMMENT '文章感悟',
                             `image_url` varchar(250) DEFAULT NULL COMMENT '图片url',
                             `is_free` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '是否免费（0：否，1：是）',
