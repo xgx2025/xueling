@@ -50,7 +50,7 @@ public interface SmartReadingAssistant {
      * @param message 英语文章
      * @return 格式化后的英语文章
      */
-    @SystemMessage(fromResource = "/prompt/formatEnglishArticle.txt")
+    @SystemMessage(fromResource = "prompt/generateImagePrompt.txt")
     String formatEnglishArticle(String message);
 
     /**
