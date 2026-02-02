@@ -43,12 +43,12 @@ public class ArticleServiceImpl implements ArticleService {
         log.info("文章标题："+chineseTitle);
         //格式化文章
         String content = smartReadingAssistant.formatEnglishArticle(articleDTO.getContent());
-        log.info("文章内容格式化："+content);
+        log.info("文章内容格式化："+content+"\n");
         //获取articleDTO的content
         String contentStr = getArticleContent(articleDTO.getContent(), articleDTO.getTitle());
         //文章中文翻译
         String chineseMeaning = smartReadingAssistant.translateArticle(contentStr);
-        log.info("文章中文翻译："+chineseMeaning);
+        log.info("文章中文翻译："+chineseMeaning+"\n");
 
         //生成文章的图片url
         String imageUrl = generateArticleImage(contentStr, articleDTO.getTitle());
