@@ -54,7 +54,8 @@ public class ArticleServiceImpl implements ArticleService {
         String imageUrl = generateArticleImage(contentStr, articleDTO.getTitle());
         log.info("文章图片url："+imageUrl);
         //生成词汇短语汇总
-        String vocabularyPhrasesSummary = smartReadingAssistant.summarizeEnglishPhrases(content);
+        System.out.println("test:"+content);
+        String vocabularyPhrasesSummary = smartReadingAssistant.summarizeEnglishPhrases(articleDTO.getContent());
         log.info("文章词汇短语汇总："+vocabularyPhrasesSummary);
         //生成阅读文章的感悟
         String articleInsights = smartReadingAssistant.generateArticleThoughts(contentStr);
