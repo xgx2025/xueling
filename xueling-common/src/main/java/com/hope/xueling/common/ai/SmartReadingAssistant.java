@@ -18,7 +18,7 @@ public interface SmartReadingAssistant {
      * @param message 英语句子
      * @return 解析结果
      */
-    @SystemMessage("/prompt/analyzeSentence.txt")
+    @SystemMessage(fromResource = "/prompt/analyzeSentence.txt")
     String analyzeEnglishSentence(String message);
 
     /**
@@ -26,7 +26,7 @@ public interface SmartReadingAssistant {
      * @param message 词汇短语
      * @return 汇总结果
      */
-    @SystemMessage("/prompt/vocabularyPhrases.txt")
+    @SystemMessage(fromResource = "/prompt/vocabularyPhrases.txt")
     String summarizeEnglishPhrases(String message);
 
     /**
@@ -34,7 +34,7 @@ public interface SmartReadingAssistant {
      * @param message 阅读文章和测试难度级别（简单/中等/困难）
      * @return 测试题
      */
-    @SystemMessage("/prompt/readTest.txt")
+    @SystemMessage(fromResource = "/prompt/readTest.txt")
     String generateReadingTest(String message);
 
     /**
@@ -42,7 +42,7 @@ public interface SmartReadingAssistant {
      * @param message 阅读文章
      * @return 文章感悟
      */
-    @SystemMessage("/prompt/readInsights.txt")
+    @SystemMessage(fromResource = "/prompt/readInsights.txt")
     String generateArticleThoughts(String message);
 
     /**
@@ -50,7 +50,7 @@ public interface SmartReadingAssistant {
      * @param message 英语文章
      * @return 格式化后的英语文章
      */
-    @SystemMessage("/prompt/formatEnglishArticle.txt")
+    @SystemMessage(fromResource = "prompt/articleContentFormat.txt")
     String formatEnglishArticle(String message);
 
     /**
@@ -64,12 +64,12 @@ public interface SmartReadingAssistant {
      * @param message 阅读文章
      * @return 图片提示词
      */
-    @SystemMessage("/prompt/generateImagePrompt.txt")
+    @SystemMessage(fromResource = "/prompt/generateImagePrompt.txt")
     String generateImagePrompt(String message);
 
     /**
      * 将文章内容翻译成中文
      */
-    @SystemMessage("/prompt/translateArticle.txt")
+    @SystemMessage(fromResource = "/prompt/translateArticle.txt")
     String translateArticle(String message);
 }

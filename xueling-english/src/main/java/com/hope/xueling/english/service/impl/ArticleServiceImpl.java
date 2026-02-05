@@ -117,7 +117,7 @@ public class ArticleServiceImpl implements ArticleService {
             String content = getArticleContentForAi(articleId);
             //调用大模型生成测试题
             content = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
-            //如果测试题不存在，生成测试题
+            //如果测试题不存在，新增测试题
             if(testMapper.selectIdByArticleIdAndUserId(articleId, userId) == null) {
                 testMapper.insertReadTest(userId, articleId, content, difficulty);
             } else {
