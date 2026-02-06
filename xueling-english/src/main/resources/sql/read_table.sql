@@ -21,6 +21,7 @@ CREATE TABLE `article` (
                             `tag` varchar(255) DEFAULT NULL COMMENT '标签（多个用逗号分隔）',
                             `author` varchar(100) NOT NULL COMMENT '作者',
                             `content` TEXT NOT NULL COMMENT '内容',
+                            `highlights` JSON NOT NULL COMMENT '文章高亮',
                             `chinese_meaning` TEXT NOT NULL COMMENT '中文翻译',
                             `vocabulary_phrases_summary` text DEFAULT NULL COMMENT '词汇短语总结',
                             `article_insights` varchar(250) DEFAULT NULL COMMENT '文章感悟',
@@ -38,6 +39,11 @@ CREATE TABLE `article` (
                                     ON DELETE RESTRICT
                                     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';
+
+#新增文章表的文章高亮字段的sql语句
+    ALTER TABLE `article` ADD COLUMN `highlights` JSON NOT NULL COMMENT '文章高亮' AFTER `content`;
+
+
 
 -- 文章阅读进度表
 CREATE TABLE `article_reading_progress` (
