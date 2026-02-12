@@ -8,7 +8,7 @@ CREATE TABLE `user` (
                         `gender` tinyint DEFAULT NULL COMMENT '性别: 0-未知, 1-男, 2-女',
                         `birthday` date DEFAULT NULL COMMENT '生日',
                         `bio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '个人简介',
-                        `vip_level` tinyint unsigned DEFAULT '0' COMMENT 'VIP等级: 0-普通，2-VIP会员，3-SVIP会员',
+                        `vip_level` tinyint unsigned DEFAULT '0' COMMENT 'VIP等级: 0-普通，1-VIP会员，2-SVIP会员',
                         `vip_start_at` datetime DEFAULT NULL COMMENT 'VIP开始时间',
                         `vip_expire_at` datetime DEFAULT NULL COMMENT 'VIP到期时间',
                         `account_status` tinyint DEFAULT '1' COMMENT '账户状态: 0-禁用, 1-正常，3-删除',

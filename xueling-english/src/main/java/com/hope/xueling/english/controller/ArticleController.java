@@ -8,7 +8,6 @@ import com.hope.xueling.english.service.impl.ArticleServiceImpl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,7 +78,6 @@ public class ArticleController {
         return Result.success(sentenceAnalysis, "句子分析成功");
     }
 
-    //TODO 待完善
     /**
      * 词汇短语汇总（用于用户上传的文章）
      * @param articleId 文章ID

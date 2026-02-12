@@ -88,6 +88,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         //先从数据库获取词汇短语汇总结果
         Map<Long, String> articlePhrases = articleMapper.selectArticlePhrases(articleId);
+        //如果不存在，则调用大模型进行词汇短语汇总
         if (articlePhrases == null || articlePhrases.isEmpty()) {
             //获取文章内容
             String content = getArticleContentForAi(articleId);

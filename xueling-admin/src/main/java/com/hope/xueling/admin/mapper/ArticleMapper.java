@@ -18,6 +18,6 @@ public interface ArticleMapper {
      * 插入文章
      * @param article 文章
      */
-    @Insert("insert into article(title,chinese_title,category_id,tag,author,content,chinese_meaning,image_url,vocabulary_phrases_summary,article_insights,is_free) values(#{title},#{chineseTitle},#{categoryId},#{tag},#{author},#{content},#{chineseMeaning},#{imageUrl},#{vocabularyPhrasesSummary},#{articleInsights},#{isFree})")
+    @Insert("insert into article(title,chinese_title,category_id,tag,author,content,highlights,chinese_meaning,image_url,vocabulary_phrases_summary,article_insights,is_free) values(#{title},#{chineseTitle},#{categoryId},#{tag},#{author},#{content},#{highlights},#{chineseMeaning},#{imageUrl},#{vocabularyPhrasesSummary},#{articleInsights},#{isFree})")
     void insertArticle(Article article);
 }
