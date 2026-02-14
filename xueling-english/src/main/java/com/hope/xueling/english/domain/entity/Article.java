@@ -2,11 +2,6 @@ package com.hope.xueling.english.domain.entity;
 
 import lombok.Data;
 
-/**
- * 文章明细实体类
- * @author 谢光益
- * @since 2026/1/26
- */
 @Data
 public class Article {
     /**
@@ -15,28 +10,51 @@ public class Article {
     private Long id;
 
     /**
-     * 作者
-     */
-    private String author;
-
-    /**
      * 文章标题
      */
     private String title;
-
     /**
      * 中文标题
      */
-     private String chineseTitle;
-
+    private String chineseTitle;
+    /**
+     * 分类 ID
+     */
+    private String categoryId;
+    /**
+     * 标签
+     */
+    private String tag;
+    /**
+     * 作者
+     */
+    private String author;
     /**
      * 文章内容
-     * 格式：每个小标题前加##，段落之间用\n分隔，句子之间用&分隔
      */
     private String content;
-
+    /**
+     * 重点单词高亮分析
+     */
+    private String highlights;
+    /**
+     * 中文翻译
+     */
+    private String chineseMeaning;
+    /**
+     * 词汇短语汇总
+     */
+    private String vocabularyPhrasesSummary;
+    /**
+     * 图片url
+     */
+    private String imageUrl;
     /**
      * 文章感悟
      */
     private String articleInsights;
+    /**
+     * 是否免费
+     */
+    private Boolean isFree;
 }

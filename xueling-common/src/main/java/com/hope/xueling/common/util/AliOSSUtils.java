@@ -67,7 +67,7 @@ public class AliOSSUtils {
         ossClient.putObject(bucketName,"read_material/article_image/"+fileName, inputStream);
 
         //文件访问路径
-        String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/" + fileName;
+        String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/read_material/article_image/" + fileName;
 
         // 关闭ossClient
         ossClient.shutdown();

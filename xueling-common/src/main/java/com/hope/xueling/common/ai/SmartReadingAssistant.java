@@ -72,4 +72,12 @@ public interface SmartReadingAssistant {
      */
     @SystemMessage(fromResource = "/prompt/translateArticle.txt")
     String translateArticle(String message);
+
+    /**
+     * 重点单词分析器
+     * @param message 阅读文章
+     * @return 重点单词
+     */
+    @SystemMessage(fromResource = "/prompt/wordAnalyzer.txt")
+    String wordAnalyzer(String message);
 }

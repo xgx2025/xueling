@@ -1,10 +1,14 @@
 package com.hope.xueling.english.service.impl;
 
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hope.xueling.common.ai.SmartReadingAssistant;
 import com.hope.xueling.common.exception.ValidationException;
 import com.hope.xueling.common.mapper.UserMapper;
 import com.hope.xueling.english.domain.entity.Article;
-import com.hope.xueling.english.domain.entity.ArticleCategory;
+import com.hope.xueling.english.domain.vo.ArticleCategory;
+import com.hope.xueling.english.domain.dto.ArticleSimple;
+import com.hope.xueling.english.domain.vo.ArticleReadingStatusVO;
 import com.hope.xueling.english.mapper.ArticleFavoriteMapper;
 import com.hope.xueling.english.mapper.ArticleMapper;
 import com.hope.xueling.english.mapper.ReadingProgressMapper;
@@ -14,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +45,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> getArticlesByCategoryId(Long categoryId) {
+    public List<ArticleSimple> getArticlesByCategoryId(Long categoryId) {
         //检查分类ID是否为空
         if (categoryId == null) {
             throw new ValidationException("分类 ID 不能为空");
         }
-        List<Article> articles = articleMapper.selectArticlesByCategoryId(categoryId);
+        List<ArticleSimple> articles = articleMapper.selectArticlesByCategoryId(categoryId);
         return articles;
     }
 
@@ -87,7 +92,13 @@ public class ArticleServiceImpl implements ArticleService {
             throw new ValidationException("用户不是会员，不能使用词汇短语汇总功能");
         }
         //先从数据库获取词汇短语汇总结果
-        Map<Long, String> articlePhrases = articleMapper.selectArticlePhrases(articleId);
+        QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", articleId).select("id", "vocabulary_phrases_summary");
+        Article article = articleMapper.selectOne(queryWrapper);
+        log.info("数据库中的词汇短语汇总结果：{}", article);
+        Map<Long, String> articlePhrases = new HashMap<>();
+        articlePhrases.put(articleId, article.getVocabularyPhrasesSummary());
+        //如果不存在，则调用大模型进行词汇短语汇总
         if (articlePhrases == null || articlePhrases.isEmpty()) {
             //获取文章内容
             String content = getArticleContentForAi(articleId);
@@ -95,10 +106,12 @@ public class ArticleServiceImpl implements ArticleService {
             String summarizeEnglishPhrases = smartReadingAssistant.summarizeEnglishPhrases(content);
             //更新数据库中的词汇短语汇总结果
             articleMapper.updateArticlePhrases(articleId, summarizeEnglishPhrases);
+            log.info("词汇短语汇总结果：{}", summarizeEnglishPhrases);
             return summarizeEnglishPhrases;
         }
         //返回词汇短语汇总结果
-        return articlePhrases.get(userId);
+        log.info("词汇短语汇总结果：{}", articlePhrases.get(articleId));
+        return articlePhrases.get(articleId);
     }
 
     @Override
@@ -116,16 +129,18 @@ public class ArticleServiceImpl implements ArticleService {
             //获取文章内容
             String content = getArticleContentForAi(articleId);
             //调用大模型生成测试题
-            content = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
+            String readTestContent = smartReadingAssistant.generateReadingTest(content + " 测试难度：" + difficulty);
             //如果测试题不存在，新增测试题
             if(testMapper.selectIdByArticleIdAndUserId(articleId, userId) == null) {
-                testMapper.insertReadTest(userId, articleId, content, difficulty);
+                testMapper.insertReadTest(userId, articleId, readTestContent, difficulty);
             } else {
                 //如果测试id存在，更新数据库中的测试题
-                testMapper.updateReadTest(userId, articleId, content, difficulty);
+                testMapper.updateReadTest(userId, articleId, readTestContent, difficulty);
             }
+            return readTestContent;
         }
         //返回测试题内容
+        log.info("测试题内容：{}", readTest);
         return readTest;
     }
 
@@ -175,7 +190,8 @@ public class ArticleServiceImpl implements ArticleService {
             throw new ValidationException("用户ID和文章ID不能为空");
         }
         //检查用户是否阅读时间是否超过2.5分钟(150秒)
-        if (readingProgressMapper.selectReadTime(userId, articleId) < 150) {
+        if (
+                readingProgressMapper.selectReadTime(userId, articleId) < 150) {
             throw new ValidationException("总阅读时间不足2.5分钟，不能完成阅读");
         }
         //更新数据库中的阅读进度
@@ -184,16 +200,24 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void addReadTime(Long userId, Long articleId, Integer readTime) {
-        //更新数据库中的阅读时间
         if(userId == null || articleId == null || readTime == null || readTime < 0) {
             throw new ValidationException("用户ID、文章ID和阅读时间不能为空");
         }
+
         //时间要大于等于150秒
         if (readTime < 150) {
             throw new ValidationException("阅读时间必须大于等于150秒");
         }
+
+        //检查是否已经存在阅读时间
+        if (readingProgressMapper.selectReadTime(userId, articleId) == null) {
+            //新增数据库中的阅读时间
+            readingProgressMapper.addReadTime(userId, articleId, readTime);
+        }
+
         //更新数据库中的阅读时间
         readingProgressMapper.updateReadTime(userId, articleId, readTime);
+
     }
 
     @Override
@@ -203,6 +227,19 @@ public class ArticleServiceImpl implements ArticleService {
         }
         //更新数据库中的文章收藏
         articleFavoriteMapper.deleteCollectArticle(userId, articleId);
+    }
+
+    @Override
+    public ArticleReadingStatusVO getArticleReadingStatus(Long userId, Long articleId) {
+        if (userId == null || articleId == null) {
+            throw new ValidationException("用户ID和文章ID不能为空");
+        }
+        //获取数据库中的阅读进度
+        Integer progressStatus = readingProgressMapper.selectReadingStatus(userId, articleId);
+        return ArticleReadingStatusVO.builder()
+                .articleId(articleId)
+                .progressStatus(progressStatus)
+                .build();
     }
 
     /**

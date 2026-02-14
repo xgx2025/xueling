@@ -95,12 +95,6 @@ public class ArticleServiceImpl implements ArticleService {
             return result;
             }, myExecutor);
         //CompletableFuture<String> contentFuture = CompletableFuture.supplyAsync(() -> { return smartReadingAssistant.formatEnglishArticle(contentStr);}, myExecutor);可简化
-        CompletableFuture<String> contentFuture = CompletableFuture.supplyAsync(() -> {
-            System.out.println(">>> [Start] 开始格式化文章...");
-            String result = smartReadingAssistant.formatEnglishArticle(articleDTO.getContent());
-            System.out.println(">>> [End] 结束格式化文章...");
-            return result;
-        }, myExecutor);
         CompletableFuture<String> chineseMeaningFuture = CompletableFuture.supplyAsync(() -> {
             System.out.println(">>> [Start] 翻译文章...");
             String result = smartReadingAssistant.translateArticle(articleDTO.getContent());
@@ -129,25 +123,32 @@ public class ArticleServiceImpl implements ArticleService {
             System.out.println(">>> [End] 获取文章感悟...");
             return result;
         }, myExecutor);
+        CompletableFuture<String> highlightAnalyzerFuture = CompletableFuture.supplyAsync(() -> {
+            System.out.println(">>> [Start] 获取单词高亮分析...");
+            String result = smartReadingAssistant.wordAnalyzer(articleDTO.getContent());
+            System.out.println(">>> [End] 获取单词高亮分析...");
+            return result;
+        }, myExecutor);
         //CompletableFuture.allOf: 将所有的CompletableFuture都绑在一起。
         //.join(): 它会阻塞当前线程，直到调用它的 future 完成为止。
-        CompletableFuture.allOf(chineseTitleFuture, contentFuture, chineseMeaningFuture, vocabularyPhrasesSummaryFuture, imageUrlFuture, articleInsightsFuture).join();
+        CompletableFuture.allOf(chineseTitleFuture, chineseMeaningFuture, vocabularyPhrasesSummaryFuture, imageUrlFuture, articleInsightsFuture,highlightAnalyzerFuture).join();
 
         String chineseTitle = chineseTitleFuture.get();
-        String content = contentFuture.get();
         String chineseMeaning = chineseMeaningFuture.get();
         String vocabularyPhrasesSummary = vocabularyPhrasesSummaryFuture.get();
         String imageUrl = imageUrlFuture.get();
         String articleInsights = articleInsightsFuture.get();
+        String highlights = highlightAnalyzerFuture.get();
 
         Article article = new Article();
         BeanUtils.copyProperties(articleDTO, article);
         article.setChineseTitle(chineseTitle);
-        article.setContent(content);
+        article.setContent(articleDTO.getContent());
         article.setChineseMeaning(chineseMeaning);
         article.setVocabularyPhrasesSummary(vocabularyPhrasesSummary);
         article.setImageUrl(imageUrl);
         article.setArticleInsights(articleInsights);
+        article.setHighlights(highlights);
         articleMapper.insertArticle(article);
 
         log.info("上传文章成功^_^");

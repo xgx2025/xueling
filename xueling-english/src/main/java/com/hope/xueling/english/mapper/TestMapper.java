@@ -27,7 +27,7 @@ public interface TestMapper {
      * @param articleId 文章ID
      * @return 阅读测试题
      */
-    @Select("select id, content from article_reading_test where user_id = #{userId} and article_id = #{articleId} and difficulty = #{difficulty}")
+    @Select("select content from article_reading_test where user_id = #{userId} and article_id = #{articleId} and difficulty = #{difficulty}")
     String selectReadTest(Long userId, Long articleId, Integer difficulty);
 
     /**

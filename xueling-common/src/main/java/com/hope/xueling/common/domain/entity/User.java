@@ -29,4 +29,10 @@ public class User {
     private String birthday;
     //个人简介
     private String bio;
+    //vip等级
+    private Integer vipLevel;
+    //vip开始时间
+    private String vipStartAt;
+    //vip到期时间
+    private String vipExpireAt;
 }

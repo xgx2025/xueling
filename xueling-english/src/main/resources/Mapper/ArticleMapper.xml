@@ -5,9 +5,8 @@
 
     <!-- 根据文章ID获取文章翻译,（根据userId到user表查询用户的vip_level>0,如果大于0,则查询，否则不查询） -->
     <select id="selectArticleTranslation" resultType="java.lang.String">
-        select translation from article where id = #{articleId}
+        select chinese_meaning from article where id = #{articleId}
         <if test="userId != null">
-            and user_id = #{userId}
             and (select vip_level from user where id = #{userId}) > 0
         </if>
     </select>

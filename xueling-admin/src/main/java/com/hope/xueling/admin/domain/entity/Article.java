@@ -34,6 +34,10 @@ public class Article {
      */
     private String content;
     /**
+     * 重点单词高亮分析
+     */
+    private String highlights;
+    /**
      * 中文翻译
      */
     private String chineseMeaning;
