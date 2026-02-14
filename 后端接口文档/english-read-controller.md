@@ -22,8 +22,8 @@ ArticleController是英语阅读模块的核心控制器，负责处理文章阅
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "获取阅读文章分类列表成功",
+  "code": 0,
+  "msg": "获取阅读文章分类列表成功",
   "data": [
     {
       "id": 1,
@@ -34,9 +34,20 @@ ArticleController是英语阅读模块的核心控制器，负责处理文章阅
 ```
 
 **示例调用：**
-```javascript
-GET /read/categories
-Authorization: Bearer {jwt_token}
+```bash
+# 使用curl命令调用
+curl -X GET "http://localhost:8080/read/categories" \
+  -H "Authorization: Bearer your_jwt_token_here"
+
+# 或者使用JavaScript fetch
+# fetch('/read/categories', {
+#   method: 'GET',
+#   headers: {
+#     'Authorization': 'Bearer your_jwt_token_here'
+#   }
+# })
+# .then(response => response.json())
+# .then(data => console.log(data));
 ```
 
 ---
@@ -60,18 +71,29 @@ Authorization: Bearer {jwt_token}
   "data": [
     {
       "id": 1,
+      "categoryId": 1,
       "author": "作者名",
       "title": "英文标题",
       "chineseTitle": "中文标题",
       "content": "文章内容",
+      "imageUrl": "图片URL",
+      "highlights": "重点高亮内容",
       "articleInsights": "文章感悟"
     }
   ]
 }
 ```
 
-**内容格式说明：**
-- `content`字段格式：每个小标题前加`##`，段落之间用`\n`分隔，句子之间用`&`分隔
+**响应字段说明：**
+- `id`: 文章ID
+- `categoryId`: 分类ID
+- `author`: 作者名
+- `title`: 英文标题
+- `chineseTitle`: 中文标题
+- `content`: 文章内容（格式：每个小标题前加`##`，段落之间用`\n`分隔，句子之间用`&`分隔）
+- `imageUrl`: 文章配图URL地址
+- `highlights`: 文章重点单词和短语的高亮分析
+- `articleInsights`: 文章感悟和学习要点
 
 ---
 
@@ -89,8 +111,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "根据文章ID获取文章翻译成功",
+  "code": 0,
+  "msg": "根据文章ID获取文章翻译成功",
   "data": "翻译内容"
 }
 ```
@@ -116,8 +138,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "句子分析成功",
+  "code": 0,
+  "msg": "句子分析成功",
   "data": "分析结果"
 }
 ```
@@ -138,8 +160,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "词汇短语汇总成功",
+  "code": 0,
+  "msg": "词汇短语汇总成功",
   "data": "汇总结果"
 }
 ```
@@ -161,8 +183,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "阅读测试题成功",
+  "code": 0,
+  "msg": "阅读测试题成功",
   "data": "测试题内容"
 }
 ```
@@ -184,8 +206,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "重新生成阅读测试题成功",
+  "code": 0,
+  "msg": "重新生成阅读测试题成功",
   "data": "新的测试题内容"
 }
 ```
@@ -207,8 +229,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "增加文章阅读时间成功",
+  "code": 0,
+  "msg": "增加文章阅读时间成功",
   "data": "增加文章阅读时间成功"
 }
 ```
@@ -229,8 +251,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "更新阅读进度为阅读中成功",
+  "code": 0,
+  "msg": "更新阅读进度为阅读中成功",
   "data": "更新阅读进度为阅读中成功"
 }
 ```
@@ -251,8 +273,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "完成文章阅读",
+  "code": 0,
+  "msg": "完成文章阅读",
   "data": "完成文章阅读"
 }
 ```
@@ -273,8 +295,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "文章收藏成功",
+  "code": 0,
+  "msg": "文章收藏成功",
   "data": "文章收藏成功"
 }
 ```
@@ -295,8 +317,8 @@ Authorization: Bearer {jwt_token}
 **响应数据：**
 ```json
 {
-  "code": 200,
-  "message": "取消文章收藏成功",
+  "code": 0,
+  "msg": "取消文章收藏成功",
   "data": "取消文章收藏成功"
 }
 ```
@@ -304,10 +326,13 @@ Authorization: Bearer {jwt_token}
 ## 错误码说明
 
 所有接口使用统一的错误码体系：
-- `200`: 成功
-- `400`: 请求参数错误
-- `401`: 未授权
-- `500`: 服务器内部错误
+- `0`: 成功
+- `401`: 未授权（UNAUTHORIZED）
+- `500`: 业务异常（BUSINESS_ERROR）
+- `501`: 验证异常（VALIDATION_ERROR）
+- `600`: 系统异常（SYSTEM_ERROR）
+- `601`: 数据库唯一冲突异常（DUPLICATE_KEY_ERROR）
+- `602`: 请不要频繁发送验证码（EMAIL_SEND_TOO_FREQUENTLY）
 
 ## 注意事项
 
@@ -316,4 +341,9 @@ Authorization: Bearer {jwt_token}
 3. **时间要求**：增加阅读时间接口要求阅读时间≥150秒
 4. **完成阅读**：完成阅读需要阅读时间超过2.5分钟
 5. **待完善功能**：词汇短语汇总功能目前标记为待完善状态
-           
+
+---
+*文档最后更新时间：2026-02-14*
+*文档维护者：谢光益*
+*准确性检查时间：2026-02-14*
+*最近修正内容：与代码完全对齐 - 统一响应格式(code:0,msg字段)、补充完整响应字段、修正参数类型、更新错误码体系*

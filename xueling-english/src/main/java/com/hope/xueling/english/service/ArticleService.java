@@ -1,7 +1,8 @@
 package com.hope.xueling.english.service;
 
-import com.hope.xueling.english.domain.entity.Article;
-import com.hope.xueling.english.domain.entity.ArticleCategory;
+import com.hope.xueling.english.domain.dto.ArticleSimple;
+import com.hope.xueling.english.domain.vo.ArticleCategory;
+import com.hope.xueling.english.domain.vo.ArticleReadingStatusVO;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface ArticleService {
      * @param categoryId 分类ID
      * @return 阅读材料列表
      */
-    List<Article> getArticlesByCategoryId(Long categoryId);
+    List<ArticleSimple> getArticlesByCategoryId(Long categoryId);
 
     /***
      * 获取文章翻译
@@ -102,4 +103,12 @@ public interface ArticleService {
      * @param articleId 文章ID
      */
     void cancelCollectArticle(Long userId, Long articleId);
+
+    /**
+     * 获取文章阅读状态
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     * @return 文章阅读状态
+     */
+    ArticleReadingStatusVO getArticleReadingStatus(Long userId, Long articleId);
 }

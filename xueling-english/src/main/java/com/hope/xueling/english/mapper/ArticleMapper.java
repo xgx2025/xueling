@@ -1,7 +1,10 @@
 package com.hope.xueling.english.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import com.hope.xueling.english.domain.entity.Article;
-import com.hope.xueling.english.domain.entity.ArticleCategory;
+import com.hope.xueling.english.domain.vo.ArticleCategory;
+import com.hope.xueling.english.domain.dto.ArticleSimple;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -15,12 +18,12 @@ import java.util.Map;
  * @since 2026/1/26
  */
 @Mapper
-public interface ArticleMapper {
+public interface ArticleMapper extends BaseMapper<Article> {
     /**
      * 获取阅读材料分类列表
      * @return 阅读文章分类列表
      */
-    @Select("select distinct id, name from article_category where is_active = 1 order by sort_order")
+    @Select("select id, name from article_category where is_active = 1 order by sort_order")
     List<ArticleCategory> selectArticleCategories();
 
     /**
@@ -29,8 +32,8 @@ public interface ArticleMapper {
      * @param categoryId 分类ID
      * @return 阅读文章文章列表
      */
-    @Select("select id, title, author, content from article where category_id = #{categoryId}")
-    List<Article> selectArticlesByCategoryId(Long categoryId);
+    @Select("select id, title, author, content, chinese_title,image_url ,article_insights ,highlights from article where category_id = #{categoryId}")
+    List<ArticleSimple> selectArticlesByCategoryId(Long categoryId);
 
     /**
      * 根据文章ID获取文章翻译

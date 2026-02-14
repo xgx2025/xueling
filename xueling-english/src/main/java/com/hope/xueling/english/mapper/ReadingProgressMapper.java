@@ -1,5 +1,6 @@
 package com.hope.xueling.english.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -53,4 +54,22 @@ public interface ReadingProgressMapper {
      */
     @Update("update article_reading_progress set progress_status = 1 where user_id = #{userId} and article_id = #{articleId}")
     void updateReadingStatus(Long userId, Long articleId);
+
+    /**
+     * 添加阅读时间
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     * @param readTime 阅读时间
+     */
+    @Insert("insert into article_reading_progress(user_id, article_id, reading_duration, progress_status) values(#{userId}, #{articleId}, #{readTime}, 1)")
+    void addReadTime(Long userId, Long articleId, Integer readTime);
+
+    /**
+     * 检查用户阅读文章状态·
+     * @param userId 用户ID
+     * @param articleId 文章ID
+     * @return 是否正在阅读文章
+     */
+    @Select("select progress_status from article_reading_progress where user_id = #{userId} and article_id = #{articleId}")
+    Integer selectReadingStatus(Long userId, Long articleId);
 }

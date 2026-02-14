@@ -1,4 +1,4 @@
-package com.hope.xueling.english.domain.entity;
+package com.hope.xueling.english.domain.vo;
 
 import lombok.Data;
 
