@@ -4,3 +4,4 @@ feign:
       default:  # 全局默认配置
         connect-timeout: 5000  # 连接超时（毫秒）
         read-timeout: 10000    # 读取超时（毫秒）
+        #测试
